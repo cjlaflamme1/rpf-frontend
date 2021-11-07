@@ -30,7 +30,7 @@ const LoginSignup: React.FC<Props> = ({ navigation }) => {
         />
         <Button
         title="Sign Up"
-        onPress={() => navigation.navigate('User Landing')}
+        onPress={() => navigation.navigate('SignUp')}
         style={[styles.logInButton]}
         />
       </View>
