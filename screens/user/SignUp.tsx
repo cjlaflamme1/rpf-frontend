@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Switch, View } from 'react-native';
+import { ScrollView, StyleSheet, Switch, View } from 'react-native';
 import { Text, Input, Button } from 'react-native-elements';
 import SignUpStepOne from '../../components/user/signUpStepOne';
 import SignUpStepThree from '../../components/user/signUpStepThree';
@@ -15,17 +15,19 @@ const SignUp: React.FC<Props> = () => {
       <View style={[styles.headerText]}>
         <Text h1>Sign Up</Text>
       </View>
-      <View style={[styles.signUpContentContainer]}>
-        {
-          signupPhase === 1 && <SignUpStepOne />
-        }
-        {
-          signupPhase === 2 && <SignUpStepTwo />
-        }
-        {
-          signupPhase === 3 && <SignUpStepThree />
-        }
-      </View>
+      <ScrollView>
+        <View style={[styles.signUpContentContainer]}>
+          {
+            signupPhase === 1 && <SignUpStepOne />
+          }
+          {
+            signupPhase === 2 && <SignUpStepTwo />
+          }
+          {
+            signupPhase === 3 && <SignUpStepThree />
+          }
+        </View>
+      </ScrollView>
       <View style={[styles.buttonContainer]}>
         <Button
         title="Back"
