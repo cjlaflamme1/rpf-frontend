@@ -2,10 +2,18 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Input, Text, CheckBox } from 'react-native-elements';
 import { Picker } from '@react-native-picker/picker';
+import { SignupObject } from '../../models/SignupObject';
 
-interface Props { };
+interface Props {
+  signupModel: {
+    signupObject: SignupObject;
+    setSignupObject: Function;
+  }
+};
 
-const SignUpStepThree: React.FC<Props> = () => {
+const SignUpStepThree: React.FC<Props> = ({ signupModel }) => {
+  const { signupObject, setSignupObject } = signupModel;
+  const [selectedBox, setSelectedBox] = useState('tr');
   const [selectedLanguage, setSelectedLanguage] = useState();
 
   return (
@@ -17,21 +25,24 @@ const SignUpStepThree: React.FC<Props> = () => {
       <Text style={[styles.headingText]} h4>Grades</Text>
       <View style={[styles.dropdownContainer, styles.typeSelections]}>
         <CheckBox
-          checked={false}
+          checked={selectedBox === 'tr'}
           style={[styles.dropdownLabel]}
           title={'TR'}
+          onPress={() => setSelectedBox('tr')}
           checkedIcon='dot-circle-o'
           uncheckedIcon='circle-o'
         />
         <CheckBox
-          checked={false}
+          checked={selectedBox === 'lead'}
+          onPress={() => setSelectedBox('lead')}
           style={[styles.dropdownLabel]}
           title={'Lead'}
           checkedIcon='dot-circle-o'
           uncheckedIcon='circle-o'
         />
         <CheckBox
-          checked={false}
+          checked={selectedBox === 'boulder'}
+          onPress={() => setSelectedBox('boulder')}
           style={[styles.dropdownLabel]}
           title={'Boulder'}
           checkedIcon='dot-circle-o'
@@ -112,6 +123,7 @@ const styles = StyleSheet.create({
   },
   dropdownLabel: {
     width: '33%',
+    backgroundColor: 'transparent',
     textAlign: 'center',
   },
   typeSelections: {

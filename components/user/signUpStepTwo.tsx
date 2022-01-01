@@ -2,10 +2,17 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
 import { Button, Input, Image } from 'react-native-elements';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { SignupObject } from '../../models/SignupObject';
 
-interface Props { };
+interface Props {
+  signupModel: {
+    signupObject: SignupObject;
+    setSignupObject: Function;
+  }
+};
 
-const SignUpStepTwo: React.FC<Props> = () => {
+const SignUpStepTwo: React.FC<Props> = ({ signupModel }) => {
+  const { signupObject, setSignupObject } = signupModel;
   const [photo, setPhoto] = useState(null);
   /*
     const createFormData = (photo, body = {}) => {
@@ -53,6 +60,8 @@ const SignUpStepTwo: React.FC<Props> = () => {
       <Input
         placeholder="First Name"
         label="First Name"
+        value={signupObject.firstName}
+        onChangeText={(text) => setSignupObject({ ...signupObject, firstName: text })}
         autoCompleteType={'name'}
         autoCorrect={false}
         inputContainerStyle={[styles.inputContainer]} />
@@ -60,6 +69,8 @@ const SignUpStepTwo: React.FC<Props> = () => {
         placeholder="Last Name"
         label="Last Name"
         autoCompleteType={'name'}
+        value={signupObject.lastName}
+        onChangeText={(text) => setSignupObject({ ...signupObject, lastName: text })}
         autoCorrect={false}
         inputContainerStyle={[styles.inputContainer]} />
       <Image
