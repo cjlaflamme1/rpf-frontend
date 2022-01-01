@@ -16,6 +16,79 @@ const SignUpStepThree: React.FC<Props> = ({ signupModel }) => {
   const [selectedBox, setSelectedBox] = useState('tr');
   const [selectedLanguage, setSelectedLanguage] = useState();
 
+  const selectorValue = (attemptStyle: string) => {
+    if (attemptStyle === 'warmup') {
+      switch(selectedBox) {
+        case 'tr':
+          return signupObject.trWarmUp;
+        case 'lead':
+          return signupObject.leadWarmUp;
+        case 'boulder':
+          return signupObject.boulderWarmUp;
+      }
+    } else if (attemptStyle === 'onsight') {
+      switch(selectedBox) {
+        case 'tr':
+          return signupObject.trOnsight;
+        case 'lead':
+          return signupObject.leadOnsight;
+        case 'boulder':
+          return signupObject.boulderOnsight;
+      }
+    } else if (attemptStyle === 'redpoint') {
+      switch(selectedBox) {
+        case 'tr':
+          return signupObject.trRedpoint;
+        case 'lead':
+          return signupObject.leadRedpoint;
+        case 'boulder':
+          return signupObject.boulderRedpoint;
+      }
+    }
+  }
+
+  const setWarmup = (input: string) => {
+    switch(selectedBox) {
+      case 'tr':
+        setSignupObject({ ...signupObject, trWarmUp: input});
+        break;
+      case 'lead':
+        setSignupObject({ ...signupObject, leadWarmUp: input});
+        break;
+      case 'boulder':
+        setSignupObject({ ...signupObject, boulderWarmUp: input});
+        break;
+    }
+  }
+
+  const setOnsight = (input: string) => {
+    switch(selectedBox) {
+      case 'tr':
+        setSignupObject({ ...signupObject, trOnsight: input});
+        break;
+      case 'lead':
+        setSignupObject({ ...signupObject, leadOnsight: input});
+        break;
+      case 'boulder':
+        setSignupObject({ ...signupObject, boulderOnsight: input});
+        break;
+    }
+  }
+
+  const setRedpoint = (input: string) => {
+    switch(selectedBox) {
+      case 'tr':
+        setSignupObject({ ...signupObject, trRedpoint: input});
+        break;
+      case 'lead':
+        setSignupObject({ ...signupObject, leadRedpoint: input});
+        break;
+      case 'boulder':
+        setSignupObject({ ...signupObject, boulderRedpoint: input});
+        break;
+    }
+  }
+
   return (
     <View style={[styles.inputContainer]}>
       <Text style={[styles.headingText]} h4>Climbing Styles</Text>
@@ -57,10 +130,9 @@ const SignUpStepThree: React.FC<Props> = ({ signupModel }) => {
       <View style={styles.dropdownContainer}>
         <Picker
           style={styles.dropdownItem}
-          selectedValue={selectedLanguage}
-          onValueChange={(itemValue, itemIndex) =>
-            setSelectedLanguage(itemValue)
-          }>
+          selectedValue={selectorValue('warmup')}
+          onValueChange={(itemValue: string) => setWarmup(itemValue)}
+          >
           <Picker.Item label="< 5.4" value="5.4" />
           <Picker.Item label="5.5" value="5.5" />
           <Picker.Item label="5.6" value="5.6" />
@@ -70,10 +142,9 @@ const SignUpStepThree: React.FC<Props> = ({ signupModel }) => {
         </Picker>
         <Picker
           style={styles.dropdownItem}
-          selectedValue={selectedLanguage}
-          onValueChange={(itemValue, itemIndex) =>
-            setSelectedLanguage(itemValue)
-          }>
+          selectedValue={selectorValue('onsight')}
+          onValueChange={(itemValue: string) => setOnsight(itemValue)}
+          >
           <Picker.Item label="< 5.4" value="5.4" />
           <Picker.Item label="5.5" value="5.5" />
           <Picker.Item label="5.6" value="5.6" />
@@ -83,10 +154,9 @@ const SignUpStepThree: React.FC<Props> = ({ signupModel }) => {
         </Picker>
         <Picker
           style={styles.dropdownItem}
-          selectedValue={selectedLanguage}
-          onValueChange={(itemValue, itemIndex) =>
-            setSelectedLanguage(itemValue)
-          }>
+          selectedValue={selectorValue('redpoint')}
+          onValueChange={(itemValue: string) => setRedpoint(itemValue)}
+          >
           <Picker.Item label="< 5.4" value="5.4" />
           <Picker.Item label="5.5" value="5.5" />
           <Picker.Item label="5.6" value="5.6" />
