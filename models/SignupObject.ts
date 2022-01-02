@@ -6,7 +6,9 @@ export interface SignupObject {
   lastName: string;
   profilePhoto: string;
   // How to store this? s3 bucket with a reference? 
-  climbingStyles: 'toperope' | 'lead' | 'boulder' | '';
+  trOnly: boolean;
+  lead: boolean;
+  boulder: boolean;
   trWarmUp: string;
   trOnsight: string;
   trRedpoint: string;

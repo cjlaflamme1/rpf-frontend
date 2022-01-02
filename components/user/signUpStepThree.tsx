@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Input, Text, CheckBox, ButtonGroup, Button } from 'react-native-elements';
+import { Input, Text, CheckBox, ButtonGroup, Button, Icon } from 'react-native-elements';
 import { Picker } from '@react-native-picker/picker';
 import { SignupObject } from '../../models/SignupObject';
+import { vScale, yds } from '../../assets/climbingVars/climbingGrades';
 
 interface Props {
   signupModel: {
@@ -91,10 +92,40 @@ const SignUpStepThree: React.FC<Props> = ({ signupModel }) => {
 
   return (
     <View style={[styles.inputContainer]}>
-      <Text style={[styles.headingText]} h4>Climbing Styles</Text>
-      <Input
-        placeholder="Enter climbing styles"
-        inputContainerStyle={[styles.inputContainer]} />
+      <Text style={[styles.headingText]} h4>Preferred Climbing Styles</Text>
+      <CheckBox
+        center
+        title="Top-rope only"
+        iconRight
+        iconType="material"
+        checkedIcon="clear"
+        uncheckedIcon="add"
+        checkedColor="red"
+        checked={signupObject.trOnly}
+        onPress={() => setSignupObject({ ...signupObject, trOnly: !signupObject.trOnly })}
+      />
+      <CheckBox
+        center
+        title="Lead climbing"
+        iconRight
+        iconType="material"
+        checkedIcon="clear"
+        uncheckedIcon="add"
+        checkedColor="red"
+        checked={signupObject.lead}
+        onPress={() => setSignupObject({ ...signupObject, lead: !signupObject.lead })}
+      />
+      <CheckBox
+        center
+        title="Bouldering"
+        iconRight
+        iconType="material"
+        checkedIcon="clear"
+        uncheckedIcon="add"
+        checkedColor="red"
+        checked={signupObject.boulder}
+        onPress={() => setSignupObject({ ...signupObject, boulder: !signupObject.boulder })}
+      />
       <Text style={[styles.headingText]} h4>Grades</Text>
       <View>
         <ButtonGroup
@@ -128,36 +159,54 @@ const SignUpStepThree: React.FC<Props> = ({ signupModel }) => {
           selectedValue={selectorValue('warmup')}
           onValueChange={(itemValue: string) => setWarmup(itemValue)}
         >
-          <Picker.Item label="< 5.4" value="5.4" />
-          <Picker.Item label="5.5" value="5.5" />
-          <Picker.Item label="5.6" value="5.6" />
-          <Picker.Item label="5.7" value="5.7" />
-          <Picker.Item label="5.8" value="5.8" />
-          <Picker.Item label="5.9" value="5.9" />
+          {
+            selectedBox !== 'boulder'
+            && yds.map((grade) => (
+              <Picker.Item label={grade} value={grade} />
+            ))
+          }
+          {
+            selectedBox === 'boulder'
+            && vScale.map((grade) => (
+              <Picker.Item label={grade} value={grade} />
+            ))
+          }
         </Picker>
         <Picker
           style={styles.dropdownItem}
           selectedValue={selectorValue('onsight')}
           onValueChange={(itemValue: string) => setOnsight(itemValue)}
         >
-          <Picker.Item label="< 5.4" value="5.4" />
-          <Picker.Item label="5.5" value="5.5" />
-          <Picker.Item label="5.6" value="5.6" />
-          <Picker.Item label="5.7" value="5.7" />
-          <Picker.Item label="5.8" value="5.8" />
-          <Picker.Item label="5.9" value="5.9" />
+          {
+            selectedBox !== 'boulder'
+            && yds.map((grade) => (
+              <Picker.Item label={grade} value={grade} />
+            ))
+          }
+          {
+            selectedBox === 'boulder'
+            && vScale.map((grade) => (
+              <Picker.Item label={grade} value={grade} />
+            ))
+          }
         </Picker>
         <Picker
           style={styles.dropdownItem}
           selectedValue={selectorValue('redpoint')}
           onValueChange={(itemValue: string) => setRedpoint(itemValue)}
         >
-          <Picker.Item label="< 5.4" value="5.4" />
-          <Picker.Item label="5.5" value="5.5" />
-          <Picker.Item label="5.6" value="5.6" />
-          <Picker.Item label="5.7" value="5.7" />
-          <Picker.Item label="5.8" value="5.8" />
-          <Picker.Item label="5.9" value="5.9" />
+          {
+            selectedBox !== 'boulder'
+            && yds.map((grade) => (
+              <Picker.Item label={grade} value={grade} />
+            ))
+          }
+          {
+            selectedBox === 'boulder'
+            && vScale.map((grade) => (
+              <Picker.Item label={grade} value={grade} />
+            ))
+          }
         </Picker>
       </View>
 
