@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Input, Text, CheckBox } from 'react-native-elements';
+import { Input, Text, CheckBox, ButtonGroup, Button } from 'react-native-elements';
 import { Picker } from '@react-native-picker/picker';
 import { SignupObject } from '../../models/SignupObject';
 
@@ -14,11 +14,11 @@ interface Props {
 const SignUpStepThree: React.FC<Props> = ({ signupModel }) => {
   const { signupObject, setSignupObject } = signupModel;
   const [selectedBox, setSelectedBox] = useState('tr');
-  const [selectedLanguage, setSelectedLanguage] = useState();
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const selectorValue = (attemptStyle: string) => {
     if (attemptStyle === 'warmup') {
-      switch(selectedBox) {
+      switch (selectedBox) {
         case 'tr':
           return signupObject.trWarmUp;
         case 'lead':
@@ -27,7 +27,7 @@ const SignUpStepThree: React.FC<Props> = ({ signupModel }) => {
           return signupObject.boulderWarmUp;
       }
     } else if (attemptStyle === 'onsight') {
-      switch(selectedBox) {
+      switch (selectedBox) {
         case 'tr':
           return signupObject.trOnsight;
         case 'lead':
@@ -36,7 +36,7 @@ const SignUpStepThree: React.FC<Props> = ({ signupModel }) => {
           return signupObject.boulderOnsight;
       }
     } else if (attemptStyle === 'redpoint') {
-      switch(selectedBox) {
+      switch (selectedBox) {
         case 'tr':
           return signupObject.trRedpoint;
         case 'lead':
@@ -48,43 +48,43 @@ const SignUpStepThree: React.FC<Props> = ({ signupModel }) => {
   }
 
   const setWarmup = (input: string) => {
-    switch(selectedBox) {
+    switch (selectedBox) {
       case 'tr':
-        setSignupObject({ ...signupObject, trWarmUp: input});
+        setSignupObject({ ...signupObject, trWarmUp: input });
         break;
       case 'lead':
-        setSignupObject({ ...signupObject, leadWarmUp: input});
+        setSignupObject({ ...signupObject, leadWarmUp: input });
         break;
       case 'boulder':
-        setSignupObject({ ...signupObject, boulderWarmUp: input});
+        setSignupObject({ ...signupObject, boulderWarmUp: input });
         break;
     }
   }
 
   const setOnsight = (input: string) => {
-    switch(selectedBox) {
+    switch (selectedBox) {
       case 'tr':
-        setSignupObject({ ...signupObject, trOnsight: input});
+        setSignupObject({ ...signupObject, trOnsight: input });
         break;
       case 'lead':
-        setSignupObject({ ...signupObject, leadOnsight: input});
+        setSignupObject({ ...signupObject, leadOnsight: input });
         break;
       case 'boulder':
-        setSignupObject({ ...signupObject, boulderOnsight: input});
+        setSignupObject({ ...signupObject, boulderOnsight: input });
         break;
     }
   }
 
   const setRedpoint = (input: string) => {
-    switch(selectedBox) {
+    switch (selectedBox) {
       case 'tr':
-        setSignupObject({ ...signupObject, trRedpoint: input});
+        setSignupObject({ ...signupObject, trRedpoint: input });
         break;
       case 'lead':
-        setSignupObject({ ...signupObject, leadRedpoint: input});
+        setSignupObject({ ...signupObject, leadRedpoint: input });
         break;
       case 'boulder':
-        setSignupObject({ ...signupObject, boulderRedpoint: input});
+        setSignupObject({ ...signupObject, boulderRedpoint: input });
         break;
     }
   }
@@ -96,30 +96,25 @@ const SignUpStepThree: React.FC<Props> = ({ signupModel }) => {
         placeholder="Enter climbing styles"
         inputContainerStyle={[styles.inputContainer]} />
       <Text style={[styles.headingText]} h4>Grades</Text>
-      <View style={[styles.dropdownContainer, styles.typeSelections]}>
-        <CheckBox
-          checked={selectedBox === 'tr'}
-          style={[styles.dropdownLabel]}
-          title={'TR'}
-          onPress={() => setSelectedBox('tr')}
-          checkedIcon='dot-circle-o'
-          uncheckedIcon='circle-o'
-        />
-        <CheckBox
-          checked={selectedBox === 'lead'}
-          onPress={() => setSelectedBox('lead')}
-          style={[styles.dropdownLabel]}
-          title={'Lead'}
-          checkedIcon='dot-circle-o'
-          uncheckedIcon='circle-o'
-        />
-        <CheckBox
-          checked={selectedBox === 'boulder'}
-          onPress={() => setSelectedBox('boulder')}
-          style={[styles.dropdownLabel]}
-          title={'Boulder'}
-          checkedIcon='dot-circle-o'
-          uncheckedIcon='circle-o'
+      <View>
+        <ButtonGroup
+          buttons={['TR', 'Lead', 'Boulder']}
+          selectedIndex={selectedIndex}
+          onPress={(value) => {
+            switch (value) {
+              case 0:
+                setSelectedBox('tr')
+                break;
+              case 1:
+                setSelectedBox('lead')
+                break;
+              case 2:
+                setSelectedBox('boulder')
+                break;
+            }
+            setSelectedIndex(value);
+          }}
+          containerStyle={{ marginBottom: 20 }}
         />
       </View>
       <View style={[styles.dropdownContainer]}>
@@ -132,7 +127,7 @@ const SignUpStepThree: React.FC<Props> = ({ signupModel }) => {
           style={styles.dropdownItem}
           selectedValue={selectorValue('warmup')}
           onValueChange={(itemValue: string) => setWarmup(itemValue)}
-          >
+        >
           <Picker.Item label="< 5.4" value="5.4" />
           <Picker.Item label="5.5" value="5.5" />
           <Picker.Item label="5.6" value="5.6" />
@@ -144,7 +139,7 @@ const SignUpStepThree: React.FC<Props> = ({ signupModel }) => {
           style={styles.dropdownItem}
           selectedValue={selectorValue('onsight')}
           onValueChange={(itemValue: string) => setOnsight(itemValue)}
-          >
+        >
           <Picker.Item label="< 5.4" value="5.4" />
           <Picker.Item label="5.5" value="5.5" />
           <Picker.Item label="5.6" value="5.6" />
@@ -156,7 +151,7 @@ const SignUpStepThree: React.FC<Props> = ({ signupModel }) => {
           style={styles.dropdownItem}
           selectedValue={selectorValue('redpoint')}
           onValueChange={(itemValue: string) => setRedpoint(itemValue)}
-          >
+        >
           <Picker.Item label="< 5.4" value="5.4" />
           <Picker.Item label="5.5" value="5.5" />
           <Picker.Item label="5.6" value="5.6" />
