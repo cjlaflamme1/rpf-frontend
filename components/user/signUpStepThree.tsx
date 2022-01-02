@@ -209,12 +209,6 @@ const SignUpStepThree: React.FC<Props> = ({ signupModel }) => {
           }
         </Picker>
       </View>
-
-
-      <Text style={[styles.headingText]} h4>Preferred Crags</Text>
-      <Input
-        placeholder="Enter favorite crags"
-        inputContainerStyle={[styles.inputContainer]} />
     </View>
   )
 };
