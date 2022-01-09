@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import { Button, Text } from 'react-native-elements';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -25,13 +25,13 @@ const LoginSignup: React.FC<Props> = ({ navigation }) => {
       <View style={[styles.buttonContainer]}>
         <Button
         title="Login"
+        buttonStyle={[styles.logInButton]}
         onPress={() => navigation.navigate('User Landing')}
-        style={[styles.logInButton]}
         />
         <Button
         title="Sign Up"
+        buttonStyle={[styles.logInButton]}
         onPress={() => navigation.navigate('SignUp')}
-        style={[styles.logInButton]}
         />
       </View>
     </View>
@@ -56,6 +56,11 @@ const styles = StyleSheet.create({
   logInButton: {
     width: 100,
     margin: 10,
+    ...Platform.select({
+      android: {
+        marginHorizontal: 20,
+      }
+    })
   }
 })
 

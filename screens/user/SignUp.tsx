@@ -104,15 +104,28 @@ const SignUp: React.FC<Props> = () => {
         <Button
           title="Back"
           disabled={signupPhase <= 1}
+          buttonStyle={[styles.logInButton]}
           onPress={() => setSignUpPhase(signupPhase - 1)}
-          style={[styles.logInButton]}
         />
-        <Button
-          title="Continue"
-          disabled={validityCheck(signupPhase)}
-          onPress={() => setSignUpPhase(signupPhase + 1)}
-          style={[styles.logInButton]}
-        />
+        {
+          signupPhase <= 2
+          ? (
+            <Button
+              title="Continue"
+              disabled={validityCheck(signupPhase)}
+              buttonStyle={[styles.logInButton]}
+              onPress={() => setSignUpPhase(signupPhase + 1)}
+            />
+          )
+          : (
+            <Button
+              title="Submit"
+              disabled={validityCheck(signupPhase)}
+              buttonStyle={[styles.logInButton]}
+              onPress={() => console.log('signing up')}
+            />
+          )
+        }
       </View>
     </View>
   )
