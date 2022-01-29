@@ -12,7 +12,7 @@ interface Props {
 
 const SignUpStepOne: React.FC<Props> = ({ signupModel }) => {
   const { signupObject, setSignupObject } = signupModel;
-  const [ pwError, setPwError] = useState('');
+  const [pwError, setPwError] = useState('');
   const [matchingPW, setMatchingPW] = useState('');
 
   const checkValidity = (pw: string) => {
@@ -41,36 +41,36 @@ const SignUpStepOne: React.FC<Props> = ({ signupModel }) => {
       setSignupObject({ ...signupObject, matchingPw: true });
     }
   }, [matchingPW])
-  
+
   return (
     <View style={[styles.inputContainer]}>
-     <Input
-          placeholder="Enter valid email"
-          label="Email"
-          value={signupObject.email || ''}
-          onChange={(e) => setSignupObject({ ...signupObject, email: e.target.valueOf() })}
-          onChangeText={(text) => setSignupObject({ ...signupObject, email: text })}
-          autoCompleteType={'email'}
-          autoCorrect={false}
-          inputContainerStyle={[styles.inputContainer]} />
-        <Input
-          placeholder="Enter password"
-          label="Password"
-          onChangeText={(text) => checkValidity(text)}
-          errorMessage={pwError}
-          autoCompleteType={'password'}
-          autoCorrect={false}
-          secureTextEntry={true}
-          inputContainerStyle={[styles.inputContainer]} />
-        <Input placeholder="Re-enter password"
-          label="Re-enter Password"
-          autoCompleteType={'password'}
-          errorMessage={checkMatch()}
-          value={matchingPW}
-          onChangeText={(text) => setMatchingPW(text)}
-          autoCorrect={false}
-          secureTextEntry={true}
-          inputContainerStyle={[styles.inputContainer]} />
+      <Input
+        placeholder="Enter valid email"
+        label="Email"
+        value={signupObject.email || ''}
+        onChange={(e) => setSignupObject({ ...signupObject, email: e.target.valueOf() })}
+        onChangeText={(text) => setSignupObject({ ...signupObject, email: text })}
+        autoCompleteType={'email'}
+        autoCorrect={false}
+        inputContainerStyle={[styles.inputContainer]} />
+      <Input
+        placeholder="Enter password"
+        label="Password"
+        onChangeText={(text) => checkValidity(text)}
+        errorMessage={pwError}
+        autoCompleteType={'password'}
+        autoCorrect={false}
+        secureTextEntry={true}
+        inputContainerStyle={[styles.inputContainer]} />
+      <Input placeholder="Re-enter password"
+        label="Re-enter Password"
+        autoCompleteType={'password'}
+        errorMessage={checkMatch()}
+        value={matchingPW}
+        onChangeText={(text) => setMatchingPW(text)}
+        autoCorrect={false}
+        secureTextEntry={true}
+        inputContainerStyle={[styles.inputContainer]} />
     </View>
   )
 };

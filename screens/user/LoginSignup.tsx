@@ -26,7 +26,7 @@ const LoginSignup: React.FC<Props> = ({ navigation }) => {
         <Button
         title="Login"
         buttonStyle={[styles.logInButton]}
-        onPress={() => navigation.navigate('User Landing')}
+        onPress={() => navigation.navigate('SignIn')}
         />
         <Button
         title="Sign Up"

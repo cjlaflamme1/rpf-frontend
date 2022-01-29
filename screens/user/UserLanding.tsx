@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Text } from 'react-native-elements';
+import { Tab } from 'react-native-elements/dist/tab/Tab';
 
 interface Props {};
 

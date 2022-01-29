@@ -5,6 +5,8 @@ import SignUpStepOne from '../../components/user/signUpStepOne';
 import SignUpStepThree from '../../components/user/signUpStepThree';
 import SignUpStepTwo from '../../components/user/signUpStepTwo';
 import { SignupObject } from '../../models/SignupObject';
+import { signUpAsync } from '../../store/authSlice';
+import { useAppDispatch } from '../../store/hooks';
 
 interface Props { };
 
@@ -12,6 +14,8 @@ const SignUp: React.FC<Props> = () => {
   const [signupPhase, setSignUpPhase] = useState(1);
   const [errors, setErrors] = useState(true);
   const [signupObject, setSignupObject] = useState<SignupObject>();
+
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (!signupObject) {
@@ -63,6 +67,12 @@ const SignUp: React.FC<Props> = () => {
       return true;
     }
   };
+
+  const signupClick = () => {
+    if (signupObject) {
+      dispatch(signUpAsync(signupObject));
+    };
+  }
 
   return (
     <View>
@@ -122,7 +132,7 @@ const SignUp: React.FC<Props> = () => {
               title="Submit"
               disabled={validityCheck(signupPhase)}
               buttonStyle={[styles.logInButton]}
-              onPress={() => console.log('signing up')}
+              onPress={signupClick}
             />
           )
         }

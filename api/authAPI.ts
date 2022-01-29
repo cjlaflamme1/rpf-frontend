@@ -18,3 +18,20 @@ export function signUp(newUser: SignupObject) {
     }
   });
 };
+
+export function login(signInObject: {email: string, password: string}) {
+  return new Promise<AxiosPromise>((resolve, reject) => {
+    try {
+      api
+        .post('auth/login', signInObject)
+        .then((response: any) => {
+          resolve(response);
+        })
+        .catch((e: Error) => {
+          reject(e);
+        });
+    } catch (e) {
+      reject(e)
+    }
+  });
+};

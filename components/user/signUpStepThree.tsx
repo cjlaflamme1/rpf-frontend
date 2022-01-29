@@ -197,14 +197,14 @@ const SignUpStepThree: React.FC<Props> = ({ signupModel }) => {
         >
           {
             selectedBox !== 'boulder'
-            && yds.map((grade) => (
-              <Picker.Item label={grade} value={grade} />
+            && yds.map((grade, index) => (
+              <Picker.Item key={`${selectedBox}-${grade}-${index}`} label={grade} value={grade} />
             ))
           }
           {
             selectedBox === 'boulder'
-            && vScale.map((grade) => (
-              <Picker.Item label={grade} value={grade} />
+            && vScale.map((grade, index) => (
+              <Picker.Item key={`${selectedBox}-${grade}-${index}`} label={grade} value={grade} />
             ))
           }
         </Picker>
