@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Switch, View } from 'react-native';
 import { Text, Input, Button } from 'react-native-elements';
 import { signInAsync } from '../../store/authSlice';
 import { useAppDispatch } from '../../store/hooks';
+import { getCurrentUserAsync } from '../../store/userSlice';
 
 interface Props { };
 
@@ -14,8 +15,9 @@ const SignIn: React.FC<Props> = () => {
 
   const dispatch = useAppDispatch();
 
-  const signupClick = () => {
-    dispatch(signInAsync({ email, password: pw }));
+  const signupClick = async () => {
+    await dispatch(signInAsync({ email, password: pw }));
+    dispatch(getCurrentUserAsync());
   }
 
   return (

@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import * as SecureStore from 'expo-secure-store';
 import { SignupObject } from '../models/SignupObject';
 import { login, signUp } from '../api/authAPI';
@@ -6,7 +6,7 @@ import { login, signUp } from '../api/authAPI';
 interface AuthState {
   loggedIn: boolean;
   email: string;
-  accessToken: string;
+  accessToken: string | null;
 }
 
 interface InitialState {
@@ -28,6 +28,7 @@ const signUpAsync = createAsyncThunk(
       const response: any = await signUp(newUser);
       if (response.data.access_token) {
         SecureStore.setItemAsync('jwt', response.data.access_token);
+        response.data.access_token = null;
       }
       return response.data;
      } catch (err: any) {
@@ -44,6 +45,10 @@ const signInAsync = createAsyncThunk(
   async (signInObject: {email: string, password: string}, { rejectWithValue }) => {
     try {
       const response: any = await login(signInObject);
+      if (response.data.access_token) {
+        SecureStore.setItemAsync('jwt', response.data.access_token);
+        response.data.access_token = null;
+      }
       return response.data;
     } catch (err: any) {
       return rejectWithValue({
@@ -57,7 +62,14 @@ const signInAsync = createAsyncThunk(
 const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    loginAction(state, action: PayloadAction<AuthState>) {
+      state.currentAuth = action.payload;
+    },
+    logoutAction(state) {
+      state.currentAuth = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(signUpAsync.pending, (state) => {
@@ -89,6 +101,7 @@ const authSlice = createSlice({
   }
 })
 
+export const { loginAction, logoutAction } = authSlice.actions;
 export default authSlice.reducer;
 
 export {

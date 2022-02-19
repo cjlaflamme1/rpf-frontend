@@ -7,6 +7,7 @@ import SignUpStepTwo from '../../components/user/signUpStepTwo';
 import { SignupObject } from '../../models/SignupObject';
 import { signUpAsync } from '../../store/authSlice';
 import { useAppDispatch } from '../../store/hooks';
+import { getCurrentUserAsync } from '../../store/userSlice';
 
 interface Props { };
 
@@ -68,9 +69,10 @@ const SignUp: React.FC<Props> = () => {
     }
   };
 
-  const signupClick = () => {
+  const signupClick = async () => {
     if (signupObject) {
-      dispatch(signUpAsync(signupObject));
+      await dispatch(signUpAsync(signupObject));
+      dispatch(getCurrentUserAsync());
     };
   }
 

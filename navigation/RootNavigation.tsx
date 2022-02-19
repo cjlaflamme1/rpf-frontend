@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, StyleSheet } from 'react-native';
 import LoginSignup from '../screens/user/LoginSignup';
-import UserLanding from '../screens/user/UserLanding';
 import SignUp from '../screens/user/SignUp';
-import { useAppSelector } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import TabNavigator from './TabNavigator';
 import SignIn from '../screens/user/SignIn';
+import { getCurrentUserAsync } from '../store/userSlice';
+import { loginAction } from '../store/authSlice';
 
 
 
@@ -14,8 +14,30 @@ const RootNavigation: React.FC = () => {
   const RootStack = createNativeStackNavigator();
   const currentState = useAppSelector((state) => ({
     authState: state.authState,
+    userState: state.userState,
   }));
+  const dispatch = useAppDispatch();
   const { currentAuth } = currentState.authState;
+
+  const checkUser = async () => {
+    try {
+      const loginStatus = await dispatch(getCurrentUserAsync());
+      if (loginStatus.payload.email) {
+        dispatch(loginAction({
+          loggedIn: true,
+          email: loginStatus.payload.email,
+          accessToken: null,
+        }))
+      }
+    } catch (e: any) {
+      return e;
+    }
+  }
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
   return (
     <>
       {
