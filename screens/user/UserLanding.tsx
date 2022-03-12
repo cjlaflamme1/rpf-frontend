@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, View, StyleSheet, ActivityIndicator } from 'react-native';
-import { Badge, Switch, Text } from 'react-native-elements';
+import { Badge, Button, Switch, Text } from 'react-native-elements';
 import { Image } from 'react-native-elements';
 import { useAppSelector } from '../../store/hooks';
 
@@ -61,6 +61,16 @@ const UserLanding: React.FC<Props> = () => {
             />
           </View>
         </View>
+        <View style={[styles.buttonContainer]}>
+          <Button
+            containerStyle={[styles.navButton]}
+            title={'Personal Profile'}
+          />
+          <Button
+            containerStyle={[styles.navButton]}
+            title={'Climbing Profile'}
+          />
+        </View>
       </ScrollView>
     </View>
   )
@@ -88,7 +98,7 @@ const styles = StyleSheet.create({
     maxWidth: '100%',
   },
   profileWidgetRow: {
-    marginTop: 10,
+    marginTop: 20,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -96,6 +106,15 @@ const styles = StyleSheet.create({
   profileWidgetItem: {
     marginLeft: 5,
     marginRight: 5,
+  },
+  buttonContainer: {
+    // maxWidth: '90%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  navButton: {
+    marginTop: 40,
+    minWidth: '50%',
   }
 })
 
