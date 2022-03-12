@@ -3,9 +3,11 @@ import { View, StyleSheet, ScrollView } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { Button, Text } from 'react-native-elements';
 
-interface Props {};
+interface Props {
+  navigation: any;
+};
 
-const CalendarLanding: React.FC<Props> = () => {
+const CalendarLanding: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View>
@@ -17,17 +19,17 @@ const CalendarLanding: React.FC<Props> = () => {
           <Button
             title="General Availability"
             buttonStyle={[styles.buttonStyle]}
-            onPress={() => console.log('click')}
+            onPress={() => navigation.navigate('General Availability')}
           />
           <Button
             title="Schedule Request"
             buttonStyle={[styles.buttonStyle]}
-            onPress={() => console.log('click')}
+            onPress={() => navigation.navigate('Schedule Request')}
           />
           <Button
             title="Browse Requests"
             buttonStyle={[styles.buttonStyle]}
-            onPress={() => console.log('click')}
+            onPress={() => navigation.navigate('Browse Requests')}
           />
         </View>
       </ScrollView>
