@@ -108,7 +108,6 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   buttonContainer: {
-    // maxWidth: '90%',
     alignItems: 'center',
     justifyContent: 'center',
   },
