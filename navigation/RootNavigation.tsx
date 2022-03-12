@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoginSignup from '../screens/user/LoginSignup';
-import SignUp from '../screens/user/SignUp';
+import LoginSignup from '../screens/loginSignup/LoginSignup';
+import SignUp from '../screens/loginSignup/SignUp';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import TabNavigator from './TabNavigator';
-import SignIn from '../screens/user/SignIn';
+import SignIn from '../screens/loginSignup/SignIn';
 import { getCurrentUserAsync } from '../store/userSlice';
 import { loginAction } from '../store/authSlice';
 

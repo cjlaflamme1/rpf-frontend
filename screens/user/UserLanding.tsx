@@ -4,9 +4,11 @@ import { Badge, Button, Switch, Text } from 'react-native-elements';
 import { Image } from 'react-native-elements';
 import { useAppSelector } from '../../store/hooks';
 
-interface Props {};
+interface Props {
+  navigation: any
+};
 
-const UserLanding: React.FC<Props> = () => {
+const UserLanding: React.FC<Props> = ({ navigation }) => {
   const [checked, setChecked] = useState(true);
   const currentState = useAppSelector((state) => ({
     userState: state.userState,
@@ -65,10 +67,12 @@ const UserLanding: React.FC<Props> = () => {
           <Button
             containerStyle={[styles.navButton]}
             title={'Personal Profile'}
+            onPress={() => navigation.navigate('Personal Profile')}
           />
           <Button
             containerStyle={[styles.navButton]}
             title={'Climbing Profile'}
+            onPress={() => navigation.navigate('Climbing Profile')}
           />
         </View>
       </ScrollView>
