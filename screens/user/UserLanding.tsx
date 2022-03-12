@@ -47,9 +47,8 @@ const UserLanding: React.FC<Props> = () => {
           <View style={[styles.profileWidgetRow]}>
             <Badge
               containerStyle={[styles.profileWidgetItem]}
-              textStyle={{color: 'black'}}
               value="8"
-              status="warning"
+              status="primary"
             />
             <Text style= {[styles.profileWidgetItem]}>Requests Open</Text>
           </View>
@@ -58,7 +57,7 @@ const UserLanding: React.FC<Props> = () => {
             <Badge
               containerStyle={[styles.profileWidgetItem]}
               value="2"
-              status="success"
+              status="primary"
             />
           </View>
         </View>
