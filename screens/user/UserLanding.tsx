@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView, View, StyleSheet, ActivityIndicator } from 'react-native';
-import { Text } from 'react-native-elements';
+import { Badge, Switch, Text } from 'react-native-elements';
 import { Image } from 'react-native-elements';
 import { useAppSelector } from '../../store/hooks';
 
 interface Props {};
 
 const UserLanding: React.FC<Props> = () => {
+  const [checked, setChecked] = useState(true);
   const currentState = useAppSelector((state) => ({
     userState: state.userState,
   }));
@@ -25,6 +26,41 @@ const UserLanding: React.FC<Props> = () => {
             PlaceholderContent={<ActivityIndicator />}
           />
           <Text style={[styles.profileName]}> {`${firstName} ${lastName}`} </Text>
+        </View>
+        <View style={[styles.profileWidgetContainer]}>
+          <View style={[styles.profileWidgetRow]}>
+            <Switch
+              value={checked}
+              onValueChange={(value) => setChecked(value)}
+              style= {[styles.profileWidgetItem]}
+            />
+            <Text style= {[styles.profileWidgetItem]}>Partner Finder Visibility</Text>
+          </View>
+          <View style={[styles.profileWidgetRow]}>
+            <Text style= {[styles.profileWidgetItem]}>Partners Found</Text>
+            <Badge
+              containerStyle={[styles.profileWidgetItem]}
+              value="4"
+              status="primary"
+            />
+          </View>
+          <View style={[styles.profileWidgetRow]}>
+            <Badge
+              containerStyle={[styles.profileWidgetItem]}
+              textStyle={{color: 'black'}}
+              value="8"
+              status="warning"
+            />
+            <Text style= {[styles.profileWidgetItem]}>Requests Open</Text>
+          </View>
+          <View style={[styles.profileWidgetRow]}>
+            <Text style= {[styles.profileWidgetItem]}>Upcoming meetups</Text>
+            <Badge
+              containerStyle={[styles.profileWidgetItem]}
+              value="2"
+              status="success"
+            />
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -48,6 +84,19 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "600",
     marginTop: 10,
+  },
+  profileWidgetContainer: {
+    maxWidth: '100%',
+  },
+  profileWidgetRow: {
+    marginTop: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  profileWidgetItem: {
+    marginLeft: 5,
+    marginRight: 5,
   }
 })
 
