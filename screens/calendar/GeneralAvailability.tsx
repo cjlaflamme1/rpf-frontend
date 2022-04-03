@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons'; 
+import { FontAwesome } from '@expo/vector-icons';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import { Button, ListItem, Text } from 'react-native-elements';
+import { Button, Icon, ListItem, Overlay, Text } from 'react-native-elements';
 
-interface Props {};
+interface Props { };
 
 const GeneralAvailability: React.FC<Props> = () => {
   const [expanded, setExpanded] = useState(false);
   const [expanded1, setExpanded1] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  const toggleOverlay = () => {
+    setVisible(!visible);
+  }
 
   return (
     <View>
@@ -19,9 +24,10 @@ const GeneralAvailability: React.FC<Props> = () => {
         />
         <View style={[styles.buttonContainer]}>
           <Button
-              title="Add New Date"
-              buttonStyle={[styles.buttonStyle]}
-            />
+            title="Add New Date"
+            buttonStyle={[styles.buttonStyle]}
+            onPress={toggleOverlay}
+          />
         </View>
         <View style={[styles.accordionContainer]}>
           <ListItem.Accordion
@@ -125,6 +131,31 @@ const GeneralAvailability: React.FC<Props> = () => {
             </ListItem>
           </ListItem.Accordion>
         </View>
+        <View>
+          <Overlay
+            isVisible={visible}
+            overlayStyle={[styles.modalContainer]}
+          >
+            <View>
+              <Text>Hello!</Text>
+              <Text>
+                Welcome to React Native Elements
+              </Text>
+            </View>
+            <View style={[styles.modalButtonContainer]}>
+              <Button
+                buttonStyle={[styles.modalButton]}
+                title="Cancel"
+                onPress={toggleOverlay}
+              />
+              <Button
+                buttonStyle={[styles.modalButton]}
+                title="Save"
+                onPress={toggleOverlay}
+              />
+            </View>
+          </Overlay>
+        </View>
       </ScrollView>
     </View>
   )
@@ -162,6 +193,18 @@ const styles = StyleSheet.create({
   },
   cardIcon: {
     marginRight: 10,
+  },
+  modalContainer: {
+    width: '90%',
+    minHeight: '50%',
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  modalButton: {
+    minWidth: 100,
   }
 })
 
