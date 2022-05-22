@@ -2,11 +2,13 @@ import {
   configureStore, ThunkAction, Action, combineReducers,
 } from '@reduxjs/toolkit';
 import authSlice from './authSlice';
+import climbAvailabilityGenSlice from './climbAvailabilityGenSlice';
 import userSlice from './userSlice';
 
 const reducer = combineReducers({
   authState: authSlice,
   userState: userSlice,
+  climbAvailabilityGenState: climbAvailabilityGenSlice,
 });
 
 export const store = configureStore({

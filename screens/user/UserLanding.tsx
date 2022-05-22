@@ -24,8 +24,10 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
         <View style={[styles.imageContainer]}>
           <Image
             containerStyle={[styles.imageBase]}
-            source={{uri: 'https://via.placeholder.com/150'}}
+            source={{ uri: 'https://via.placeholder.com/150' }}
             PlaceholderContent={<ActivityIndicator />}
+            height={150}
+            width={150}
           />
           <Text style={[styles.profileName]}> {`${firstName} ${lastName}`} </Text>
         </View>

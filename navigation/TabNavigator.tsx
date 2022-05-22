@@ -16,7 +16,7 @@ const TabNavigator: React.FC = () => {
         options={{
           tabBarLabel: 'Profile',
           tabBarIcon: ({ focused, color, size }) => {
-            return <MaterialCommunityIcons focused={focused} name="face-profile" size={size} color={color} />
+            return <MaterialCommunityIcons focused={focused} name="face-man-outline" size={size} color={color} />
           },
           headerShown: false,
         }}

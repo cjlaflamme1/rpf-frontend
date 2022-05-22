@@ -8,6 +8,8 @@ import { Picker } from '@react-native-picker/picker';
 import { daysOfWeek } from '../../assets/calendarVars/daysOfWeek';
 import { GeneralAvailabilityModel } from '../../models/GeneralAvailability';
 import { climbingAreas } from '../../assets/climbingVars/climbingAreas';
+import { useAppDispatch } from '../../store/hooks';
+import { createClimbAvailabilityGenAsync, getAllClimbAvailabilityGenAsync } from '../../store/climbAvailabilityGenSlice';
 
 interface Props { };
 
@@ -16,8 +18,10 @@ const GeneralAvailability: React.FC<Props> = () => {
   const [expanded1, setExpanded1] = useState(false);
   const [visible, setVisible] = useState(false);
   const [newGenAvail, setNewGenAvail ] = useState<GeneralAvailabilityModel>();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
+    dispatch(getAllClimbAvailabilityGenAsync());
     if (!newGenAvail) {
       setNewGenAvail({
         day: 'Monday',
@@ -52,6 +56,13 @@ const GeneralAvailability: React.FC<Props> = () => {
     setVisible(false);
   }
 
+  const submitAvailability = async () => {
+    if (newGenAvail) {
+      await dispatch(createClimbAvailabilityGenAsync(newGenAvail))
+    }
+    closeOverlay();
+  }
+
   return (
     <View>
       <ScrollView>
@@ -69,6 +80,8 @@ const GeneralAvailability: React.FC<Props> = () => {
           <ListItem.Accordion
             style={[styles.accordion]}
             isExpanded={expanded}
+            hasTVPreferredFocus={undefined}
+            tvParallaxProperties={undefined}
             onPress={() => setExpanded(!expanded)}
             content={
               <>
@@ -85,6 +98,8 @@ const GeneralAvailability: React.FC<Props> = () => {
             <ListItem
               style={[styles.accordionItem]}
               containerStyle={[styles.accordionItem]}
+              hasTVPreferredFocus={undefined}
+              tvParallaxProperties={undefined}
             >
               <ListItem.Content>
                 <View style={[styles.accordionCard]}>
@@ -118,6 +133,8 @@ const GeneralAvailability: React.FC<Props> = () => {
           </ListItem.Accordion>
           <ListItem.Accordion
             style={[styles.accordion]}
+            hasTVPreferredFocus={undefined}
+            tvParallaxProperties={undefined}
             isExpanded={expanded1}
             onPress={() => setExpanded1(!expanded1)}
             content={
@@ -135,6 +152,8 @@ const GeneralAvailability: React.FC<Props> = () => {
             <ListItem
               style={[styles.accordionItem]}
               containerStyle={[styles.accordionItem]}
+              hasTVPreferredFocus={undefined}
+              tvParallaxProperties={undefined}
             >
               <ListItem.Content>
                 <View style={[styles.accordionCard]}>
@@ -331,7 +350,11 @@ const GeneralAvailability: React.FC<Props> = () => {
                         <View>
                           {
                             climbingAreas.map((area) => (
-                              <ListItem key={`areas-${area}`}>
+                              <ListItem
+                                hasTVPreferredFocus={undefined}
+                                tvParallaxProperties={undefined}
+                                key={`areas-${area}`}
+                              >
                                 <ListItem.CheckBox
                                   checked={newGenAvail.areas && newGenAvail.areas.length > 0 ? newGenAvail.areas.includes(area) : false}
                                   onIconPress={() => {
@@ -371,7 +394,7 @@ const GeneralAvailability: React.FC<Props> = () => {
                     if (newDateStep <= 2) {
                       setNewDateStep(newDateStep + 1);
                     } else {
-                      closeOverlay();
+                      submitAvailability();
                     }
                   }}
                 />
