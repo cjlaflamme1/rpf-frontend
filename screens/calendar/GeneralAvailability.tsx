@@ -9,7 +9,7 @@ import { daysOfWeek } from '../../assets/calendarVars/daysOfWeek';
 import { GeneralAvailabilityModel } from '../../models/GeneralAvailability';
 import { climbingAreas } from '../../assets/climbingVars/climbingAreas';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { createClimbAvailabilityGenAsync, getAllClimbAvailabilityGenAsync, getOneClimbAvailGenAsync } from '../../store/climbAvailabilityGenSlice';
+import { createClimbAvailabilityGenAsync, deleteOneGenAvailAsync, getAllClimbAvailabilityGenAsync, getOneClimbAvailGenAsync, updateOneGenAvailAsync } from '../../store/climbAvailabilityGenSlice';
 
 interface Props { };
 
@@ -46,8 +46,8 @@ const GeneralAvailability: React.FC<Props> = () => {
 
   const editGenAvail = async (id: string) => {
     const incomingAvail= await dispatch(getOneClimbAvailGenAsync(id));
-    setEditId(id);
     if (incomingAvail.payload) {
+      setEditId(incomingAvail.payload.id);
       setNewGenAvail({
         day: incomingAvail.payload.day,
         startHour: incomingAvail.payload.startHour,
@@ -84,10 +84,18 @@ const GeneralAvailability: React.FC<Props> = () => {
   }
 
   const submitAvailability = async () => {
-    if (newGenAvail) {
+    if (newGenAvail && !editId) {
       await dispatch(createClimbAvailabilityGenAsync(newGenAvail))
+    } else if (newGenAvail && editId) {
+      await dispatch(updateOneGenAvailAsync({id: editId, updateBody: newGenAvail}));
     }
+    dispatch(getAllClimbAvailabilityGenAsync());
     closeOverlay();
+  }
+
+  const deleteAvailability = async (id: string) => {
+    await dispatch(deleteOneGenAvailAsync(id));
+    dispatch(getAllClimbAvailabilityGenAsync());
   }
 
   const returnCalendarMarks = () => {
@@ -188,7 +196,7 @@ const GeneralAvailability: React.FC<Props> = () => {
                           name="trash-o"
                           size={24}
                           color="black"
-                          onPress={() => console.log('clicky')}
+                          onPress={() => deleteAvailability(availability.id)}
                         />
                       </View>
                     </View>

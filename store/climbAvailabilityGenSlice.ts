@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { createGenAvail, getAllGenAvail, getOneGenAvail } from '../api/climbAvailabilityGenAPI';
+import { createGenAvail, deleteOneGenAvail, getAllGenAvail, getOneGenAvail, updateOneGenAvail } from '../api/climbAvailabilityGenAPI';
 import { GeneralAvailabilityModel } from '../models/GeneralAvailability';
 
 export interface ClimbAvailabilityGen {
@@ -88,6 +88,39 @@ const getOneClimbAvailGenAsync = createAsyncThunk(
   },
 );
 
+const updateOneGenAvailAsync = createAsyncThunk(
+  'climbAvailabilityGen/update',
+  async (arg: { id: string, updateBody: Partial<ClimbAvailabilityGen>}, { rejectWithValue }) => {
+    try {
+      const response: any = await updateOneGenAvail(arg.id, arg.updateBody);
+      if (response.data.areas) {
+        response.data.areas = JSON.parse(response.data.areas);
+      }
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue({
+        name: err.name,
+        message: err.message,
+      });
+    }
+  },
+);
+
+const deleteOneGenAvailAsync = createAsyncThunk(
+  'climbAvailabilityGen/deleteOne',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response: any = await deleteOneGenAvail(id);
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue({
+        name: err.name,
+        message: err.message,
+      });
+    }
+  },
+);
+
 const climbAvailabilityGenSlice = createSlice({
   name: 'climbAvailabilityGen',
   initialState,
@@ -132,6 +165,31 @@ const climbAvailabilityGenSlice = createSlice({
         state.status = 'failed',
         state.selectedClimbGenAvailability = null;
         state.error = action.payload;
+      })
+      .addCase(updateOneGenAvailAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateOneGenAvailAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.selectedClimbGenAvailability = action.payload;
+        state.error = null;
+      })
+      .addCase(updateOneGenAvailAsync.rejected, (state, action) => {
+        state.status = 'failed',
+        state.selectedClimbGenAvailability = null;
+        state.error = action.payload;
+      })
+      .addCase(deleteOneGenAvailAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(deleteOneGenAvailAsync.fulfilled, (state) => {
+        state.status = 'idle';
+        state.error = null;
+      })
+      .addCase(deleteOneGenAvailAsync.rejected, (state, action) => {
+        state.status = 'failed',
+        state.selectedClimbGenAvailability = null;
+        state.error = action.payload;
       });
   }
 })
@@ -142,4 +200,6 @@ export {
   createClimbAvailabilityGenAsync,
   getAllClimbAvailabilityGenAsync,
   getOneClimbAvailGenAsync,
+  updateOneGenAvailAsync,
+  deleteOneGenAvailAsync,
 }
