@@ -8,17 +8,23 @@ import { Picker } from '@react-native-picker/picker';
 import { daysOfWeek } from '../../assets/calendarVars/daysOfWeek';
 import { GeneralAvailabilityModel } from '../../models/GeneralAvailability';
 import { climbingAreas } from '../../assets/climbingVars/climbingAreas';
-import { useAppDispatch } from '../../store/hooks';
-import { createClimbAvailabilityGenAsync, getAllClimbAvailabilityGenAsync } from '../../store/climbAvailabilityGenSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { createClimbAvailabilityGenAsync, getAllClimbAvailabilityGenAsync, getOneClimbAvailGenAsync } from '../../store/climbAvailabilityGenSlice';
 
 interface Props { };
 
 const GeneralAvailability: React.FC<Props> = () => {
-  const [expanded, setExpanded] = useState(false);
-  const [expanded1, setExpanded1] = useState(false);
+  const [expanded, setExpanded] = useState('');
   const [visible, setVisible] = useState(false);
   const [newGenAvail, setNewGenAvail ] = useState<GeneralAvailabilityModel>();
+  const [editId, setEditId] = useState('');
   const dispatch = useAppDispatch();
+  
+  const currentState = useAppSelector((state) => ({
+    climbAvailabilityGenState: state.climbAvailabilityGenState,
+  }));
+
+  const { allClimbGenAvailability, selectedClimbGenAvailability } = currentState.climbAvailabilityGenState;
 
   useEffect(() => {
     dispatch(getAllClimbAvailabilityGenAsync());
@@ -38,11 +44,32 @@ const GeneralAvailability: React.FC<Props> = () => {
 
   const [newDateStep, setNewDateStep] = useState(0);
 
+  const editGenAvail = async (id: string) => {
+    const incomingAvail= await dispatch(getOneClimbAvailGenAsync(id));
+    setEditId(id);
+    if (incomingAvail.payload) {
+      setNewGenAvail({
+        day: incomingAvail.payload.day,
+        startHour: incomingAvail.payload.startHour,
+        startMinute: incomingAvail.payload.startMinute,
+        startAMPM: incomingAvail.payload.startAMPM,
+        finishHour: incomingAvail.payload.finishHour,
+        finishMinute: incomingAvail.payload.finishMinute,
+        finishAMPM: incomingAvail.payload.finishAMPM,
+        areas: incomingAvail.payload.areas && incomingAvail.payload.areas.length > 0 
+          ? incomingAvail.payload.areas.slice()
+          : [],
+      })
+    }
+    openOverlay();
+  }
+
   const openOverlay = () => {
     setVisible(true);
   }
   const closeOverlay = () => {
     setNewDateStep(0);
+    setEditId('');
     setNewGenAvail({
       day: 'Monday',
       startHour: 9,
@@ -63,10 +90,34 @@ const GeneralAvailability: React.FC<Props> = () => {
     closeOverlay();
   }
 
+  const returnCalendarMarks = () => {
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+    const returnObject: any = {};
+    if (allClimbGenAvailability && allClimbGenAvailability.length > 0) {
+      for (let i = 0; daysInMonth > i; i++) {
+        const dayOfWeek = new Date(currentYear, currentMonth, i);
+        const matchedDays = allClimbGenAvailability.filter((avail) => avail.day === daysOfWeek[dayOfWeek.getDay()]);
+        const formattedDate = `${currentYear}-${(currentMonth + 1).toLocaleString('en-US', {minimumIntegerDigits: 2})}-${i.toLocaleString('en-US', {minimumIntegerDigits: 2})}`;
+        if (matchedDays && matchedDays.length > 0) {
+          matchedDays.map((matchedAvail) => {
+            returnObject[formattedDate] = { color: 'green', marked: true }
+          })
+        }
+      }
+    }
+    return  returnObject;
+  };
+
   return (
     <View>
       <ScrollView>
         <Calendar
+          hideExtraDays
+          hideArrows
+          markedDates={returnCalendarMarks()}
           style={[styles.calendar]}
         />
         <View style={[styles.buttonContainer]}>
@@ -77,114 +128,75 @@ const GeneralAvailability: React.FC<Props> = () => {
           />
         </View>
         <View style={[styles.accordionContainer]}>
-          <ListItem.Accordion
-            style={[styles.accordion]}
-            isExpanded={expanded}
-            hasTVPreferredFocus={undefined}
-            tvParallaxProperties={undefined}
-            onPress={() => setExpanded(!expanded)}
-            content={
-              <>
-                <ListItem.Content style={[styles.accordion]}>
-                  <ListItem.Title>
-                    <Text>
-                      Every Thursday
-                    </Text>
-                  </ListItem.Title>
-                </ListItem.Content>
-              </>
-            }
-          >
-            <ListItem
-              style={[styles.accordionItem]}
-              containerStyle={[styles.accordionItem]}
-              hasTVPreferredFocus={undefined}
-              tvParallaxProperties={undefined}
-            >
-              <ListItem.Content>
-                <View style={[styles.accordionCard]}>
-                  <View>
-                    <Text>
-                      2pm-9pm
-                    </Text>
-                    <Text>
-                      Rumney
-                    </Text>
-                  </View>
-                  <View style={[styles.cardButtons]}>
-                    <FontAwesome
-                      style={[styles.cardIcon]}
-                      name="edit"
-                      size={24}
-                      color="black"
-                      onPress={() => console.log('clicky')}
-                    />
-                    <FontAwesome
-                      style={[styles.cardIcon]}
-                      name="trash-o"
-                      size={24}
-                      color="black"
-                      onPress={() => console.log('clicky')}
-                    />
-                  </View>
-                </View>
-              </ListItem.Content>
-            </ListItem>
-          </ListItem.Accordion>
-          <ListItem.Accordion
-            style={[styles.accordion]}
-            hasTVPreferredFocus={undefined}
-            tvParallaxProperties={undefined}
-            isExpanded={expanded1}
-            onPress={() => setExpanded1(!expanded1)}
-            content={
-              <>
-                <ListItem.Content style={[styles.accordion]}>
-                  <ListItem.Title>
-                    <Text>
-                      Every Other Tuesday
-                    </Text>
-                  </ListItem.Title>
-                </ListItem.Content>
-              </>
-            }
-          >
-            <ListItem
-              style={[styles.accordionItem]}
-              containerStyle={[styles.accordionItem]}
-              hasTVPreferredFocus={undefined}
-              tvParallaxProperties={undefined}
-            >
-              <ListItem.Content>
-                <View style={[styles.accordionCard]}>
-                  <View>
-                    <Text>
-                      2pm-9pm
-                    </Text>
-                    <Text>
-                      Rumney
-                    </Text>
-                  </View>
-                  <View style={[styles.cardButtons]}>
-                    <FontAwesome
-                      style={[styles.cardIcon]}
-                      name="edit"
-                      size={24}
-                      color="black"
-                      onPress={() => console.log('clicky')}
-                    />
-                    <FontAwesome
-                      style={[styles.cardIcon]}
-                      name="trash-o"
-                      size={24}
-                      color="black"
-                      onPress={() => console.log('clicky')}
-                    />
-                  </View>
-                </View>
-              </ListItem.Content>
-            </ListItem>
-          </ListItem.Accordion>
+          {
+            allClimbGenAvailability
+            && allClimbGenAvailability.length > 0
+            && allClimbGenAvailability
+            .slice()
+            .map((availability, index) => (
+              <ListItem.Accordion
+                key={`${availability.id}-${index}`}
+                style={[styles.accordion]}
+                isExpanded={expanded === availability.id}
+                hasTVPreferredFocus={undefined}
+                tvParallaxProperties={undefined}
+                onPress={() => setExpanded(availability.id)}
+                content={
+                  <>
+                    <ListItem.Content style={[styles.accordion]}>
+                      <ListItem.Title>
+                        <Text>
+                          { availability.day }
+                        </Text>
+                      </ListItem.Title>
+                    </ListItem.Content>
+                  </>
+                }
+              >
+                <ListItem
+                  style={[styles.accordionItem]}
+                  containerStyle={[styles.accordionItem]}
+                  hasTVPreferredFocus={undefined}
+                  tvParallaxProperties={undefined}
+                >
+                  <ListItem.Content>
+                    <View style={[styles.accordionCard]}>
+                      <View>
+                        <Text>
+                          {`${availability.startHour}:${availability.startMinute} ${availability.startAMPM} – ${availability.finishHour}:${availability.startMinute} ${availability.finishAMPM}`}
+                        </Text>
+                        <Text>
+                          {
+                            availability.areas
+                            && availability.areas.length > 0
+                            && availability.areas.map((area, index) => (
+                              <Text key={`${area}-${index}`}>{area}</Text>
+                            ))
+                          }
+                        </Text>
+                      </View>
+                      <View style={[styles.cardButtons]}>
+                        <FontAwesome
+                          style={[styles.cardIcon]}
+                          name="edit"
+                          size={24}
+                          color="black"
+                          onPress={() => editGenAvail(availability.id)}
+                        />
+                        <FontAwesome
+                          style={[styles.cardIcon]}
+                          name="trash-o"
+                          size={24}
+                          color="black"
+                          onPress={() => console.log('clicky')}
+                        />
+                      </View>
+                    </View>
+                  </ListItem.Content>
+                </ListItem>
+              </ListItem.Accordion>
+            ))
+          }
         </View>
         <View>
           <Overlay

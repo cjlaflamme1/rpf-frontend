@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { createGenAvail, getAllGenAvail } from '../api/climbAvailabilityGenAPI';
+import { createGenAvail, getAllGenAvail, getOneGenAvail } from '../api/climbAvailabilityGenAPI';
 import { GeneralAvailabilityModel } from '../models/GeneralAvailability';
 
 export interface ClimbAvailabilityGen {
@@ -70,6 +70,24 @@ const getAllClimbAvailabilityGenAsync = createAsyncThunk(
   },
 );
 
+const getOneClimbAvailGenAsync = createAsyncThunk(
+  'climbAvailabilityGen/getOne',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response: any = await getOneGenAvail(id);
+      if (response.data && response.data.areas) {
+        response.data.areas = JSON.parse(response.data.areas);
+      }
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue({
+        name: err.name,
+        message: err.message,
+      });
+    }
+  },
+);
+
 const climbAvailabilityGenSlice = createSlice({
   name: 'climbAvailabilityGen',
   initialState,
@@ -101,6 +119,19 @@ const climbAvailabilityGenSlice = createSlice({
         state.status = 'failed',
         state.allClimbGenAvailability = null;
         state.error = action.payload;
+      })
+      .addCase(getOneClimbAvailGenAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(getOneClimbAvailGenAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.selectedClimbGenAvailability = action.payload;
+        state.error = null;
+      })
+      .addCase(getOneClimbAvailGenAsync.rejected, (state, action) => {
+        state.status = 'failed',
+        state.selectedClimbGenAvailability = null;
+        state.error = action.payload;
       });
   }
 })
@@ -110,4 +141,5 @@ export default climbAvailabilityGenSlice.reducer;
 export {
   createClimbAvailabilityGenAsync,
   getAllClimbAvailabilityGenAsync,
+  getOneClimbAvailGenAsync,
 }
