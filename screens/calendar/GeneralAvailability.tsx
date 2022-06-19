@@ -100,22 +100,24 @@ const GeneralAvailability: React.FC<Props> = () => {
 
   const returnCalendarMarks = () => {
     const currentDate = new Date();
-    const currentMonth = currentDate.getMonth();
+    const currentMonth = (currentDate.getMonth());
     const currentYear = currentDate.getFullYear();
-    const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+    const daysInMonth = new Date(currentYear, (currentMonth + 1), 0).getDate();
     const returnObject: any = {};
     if (allClimbGenAvailability && allClimbGenAvailability.length > 0) {
       for (let i = 0; daysInMonth > i; i++) {
-        const dayOfWeek = new Date(currentYear, currentMonth, i);
+        const dayOfWeek = new Date(currentYear, currentMonth, (i + 1));
         const matchedDays = allClimbGenAvailability.filter((avail) => avail.day === daysOfWeek[dayOfWeek.getDay()]);
-        const formattedDate = `${currentYear}-${(currentMonth + 1).toLocaleString('en-US', {minimumIntegerDigits: 2})}-${i.toLocaleString('en-US', {minimumIntegerDigits: 2})}`;
         if (matchedDays && matchedDays.length > 0) {
+          const formattedDate = `${currentYear}-${(currentMonth + 1).toLocaleString('en-US', {minimumIntegerDigits: 2})}-${(i + 1).toLocaleString('en-US', {minimumIntegerDigits: 2})}`;
           matchedDays.map((matchedAvail) => {
+            console.log(matchedAvail, formattedDate);
             returnObject[formattedDate] = { color: 'green', marked: true }
           })
         }
       }
     }
+    console.log(returnObject);
     return  returnObject;
   };
 
@@ -126,6 +128,7 @@ const GeneralAvailability: React.FC<Props> = () => {
           hideExtraDays
           hideArrows
           markedDates={returnCalendarMarks()}
+          // markedDates={{ '2022-06-18': { marked: true } }}
           style={[styles.calendar]}
         />
         <View style={[styles.buttonContainer]}>
