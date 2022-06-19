@@ -111,13 +111,11 @@ const GeneralAvailability: React.FC<Props> = () => {
         if (matchedDays && matchedDays.length > 0) {
           const formattedDate = `${currentYear}-${(currentMonth + 1).toLocaleString('en-US', {minimumIntegerDigits: 2})}-${(i + 1).toLocaleString('en-US', {minimumIntegerDigits: 2})}`;
           matchedDays.map((matchedAvail) => {
-            console.log(matchedAvail, formattedDate);
             returnObject[formattedDate] = { color: 'green', marked: true }
           })
         }
       }
     }
-    console.log(returnObject);
     return  returnObject;
   };
 
@@ -128,7 +126,6 @@ const GeneralAvailability: React.FC<Props> = () => {
           hideExtraDays
           hideArrows
           markedDates={returnCalendarMarks()}
-          // markedDates={{ '2022-06-18': { marked: true } }}
           style={[styles.calendar]}
         />
         <View style={[styles.buttonContainer]}>
@@ -144,6 +141,14 @@ const GeneralAvailability: React.FC<Props> = () => {
             && allClimbGenAvailability.length > 0
             && allClimbGenAvailability
             .slice()
+            .sort((a, b) => {
+              const day1 = daysOfWeek.indexOf(a.day);
+              const day2 = daysOfWeek.indexOf(b.day);
+              if (day1 < day2) {
+                return -1;
+              }
+              return 1;
+            })
             .map((availability, index) => (
               <ListItem.Accordion
                 key={`${availability.id}-${index}`}
