@@ -3,12 +3,14 @@ import {
 } from '@reduxjs/toolkit';
 import authSlice from './authSlice';
 import climbAvailabilityGenSlice from './climbAvailabilityGenSlice';
+import climbAvailabilityScheduledSlice from './climbAvailabilityScheduledSlice';
 import userSlice from './userSlice';
 
 const reducer = combineReducers({
   authState: authSlice,
   userState: userSlice,
   climbAvailabilityGenState: climbAvailabilityGenSlice,
+  climbAvailabilityScheduledState: climbAvailabilityScheduledSlice,
 });
 
 export const store = configureStore({

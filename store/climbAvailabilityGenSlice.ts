@@ -188,7 +188,6 @@ const climbAvailabilityGenSlice = createSlice({
       })
       .addCase(deleteOneGenAvailAsync.rejected, (state, action) => {
         state.status = 'failed',
-        state.selectedClimbGenAvailability = null;
         state.error = action.payload;
       });
   }

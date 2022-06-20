@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import { Button, Icon, ListItem, Overlay, Text } from 'react-native-elements';
+import { Button, ListItem, Overlay, Text } from 'react-native-elements';
 import { Picker } from '@react-native-picker/picker';
 import { daysOfWeek } from '../../assets/calendarVars/daysOfWeek';
 import { GeneralAvailabilityModel } from '../../models/GeneralAvailability';
@@ -43,6 +42,9 @@ const GeneralAvailability: React.FC<Props> = () => {
   }, []);
 
   const [newDateStep, setNewDateStep] = useState(0);
+  const openOverlay = () => {
+    setVisible(true);
+  }
 
   const editGenAvail = async (id: string) => {
     const incomingAvail= await dispatch(getOneClimbAvailGenAsync(id));
@@ -64,9 +66,6 @@ const GeneralAvailability: React.FC<Props> = () => {
     openOverlay();
   }
 
-  const openOverlay = () => {
-    setVisible(true);
-  }
   const closeOverlay = () => {
     setNewDateStep(0);
     setEditId('');
