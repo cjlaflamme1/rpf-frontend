@@ -16,10 +16,14 @@ interface Props {};
 const ScheduleRequest: React.FC<Props> = () => {
   const [expanded, setExpanded] = useState('');
   const [visible, setVisible] = useState(false);
-  const [newGenAvail, setNewGenAvail ] = useState<ScheduledAvailabilityModel>();
   const [editId, setEditId] = useState('');
   const [newDateStep, setNewDateStep] = useState(0);
   const dispatch = useAppDispatch();
+
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedStartTime, setSelectedStartTime] = useState(new Date());
+  const [selectedEndTime, setSelectedEndTime] = useState(new Date());
+  const [areas, setAreas] = useState<string[]>([]);
 
   const currentState = useAppSelector((state) => ({
     climbAvailabilityScheduledState: state.climbAvailabilityScheduledState,
@@ -27,13 +31,6 @@ const ScheduleRequest: React.FC<Props> = () => {
 
   useEffect(() => {
     dispatch(getAllclimbAvailabilityScheduledAsync());
-    if (!newGenAvail) {
-      setNewGenAvail({
-        startDateTime: new Date(),
-        endDateTime: new Date(),
-        areas: [],
-      })
-    }
   }, []);
 
   const { allScheduledAvailability, selectedScheduledAvailability } = currentState.climbAvailabilityScheduledState;
@@ -46,13 +43,12 @@ const ScheduleRequest: React.FC<Props> = () => {
     const incomingAvail= await dispatch(getOneClimbAvailScheduledAsync(id));
     if (incomingAvail.payload) {
       setEditId(incomingAvail.payload.id);
-      setNewGenAvail({
-        startDateTime: incomingAvail.payload.startDateTime,
-        endDateTime: incomingAvail.payload.endDateTime,
-        areas: incomingAvail.payload.areas && incomingAvail.payload.areas.length > 0 
-          ? incomingAvail.payload.areas.slice()
-          : [],
-      })
+      setSelectedDate(new Date(incomingAvail.payload.startDateTime));
+      setSelectedStartTime(new Date(incomingAvail.payload.startDateTime));
+      setSelectedEndTime(new Date(incomingAvail.payload.endDateTime));
+      if (incomingAvail.payload.areas) {
+        setAreas(incomingAvail.payload.areas.slice());
+      }
     }
     openOverlay();
   }
@@ -60,19 +56,35 @@ const ScheduleRequest: React.FC<Props> = () => {
   const closeOverlay = () => {
     setNewDateStep(0);
     setEditId('');
-    setNewGenAvail({
-      startDateTime: new Date(),
-      endDateTime: new Date(),
-      areas: [],
-    })
+    setSelectedDate(new Date());
+    setSelectedStartTime(new Date());
+    setSelectedEndTime(new Date());
+    setAreas([]);
     setVisible(false);
   }
 
   const submitAvailability = async () => {
-    if (newGenAvail && !editId) {
-      await dispatch(createClimbAvailabilityScheduledAsync(newGenAvail))
-    } else if (newGenAvail && editId) {
-      await dispatch(updateOneScheduledAvailAsync({id: editId, updateBody: newGenAvail}));
+    const newAvail: ScheduledAvailabilityModel = {
+      startDateTime: new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate(),
+        selectedStartTime.getHours(),
+        selectedDate.getMinutes(),
+      ),
+      endDateTime: new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate(),
+        selectedEndTime.getHours(),
+        selectedEndTime.getMinutes(),
+      ),
+      areas,
+    }
+    if (!editId) {
+      await dispatch(createClimbAvailabilityScheduledAsync(newAvail))
+    } else if (editId) {
+      await dispatch(updateOneScheduledAvailAsync({id: editId, updateBody: newAvail}));
     }
     dispatch(getAllclimbAvailabilityScheduledAsync());
     closeOverlay();
@@ -102,6 +114,7 @@ const ScheduleRequest: React.FC<Props> = () => {
             && allScheduledAvailability.length > 0
             && allScheduledAvailability
             .slice()
+            .sort((a, b) => a.startDateTime.valueOf() < b.startDateTime.valueOf() ? -1 : 1)
             .map((availability, index) => (
               <ListItem.Accordion
                 key={`${availability.id}-${index}`}
@@ -134,7 +147,7 @@ const ScheduleRequest: React.FC<Props> = () => {
                         <Text>
                           {new Date(availability.startDateTime).toLocaleTimeString()}–{new Date(availability.endDateTime).toLocaleTimeString()}
                         </Text>
-                        <Text>
+                        <View>
                           {
                             availability.areas
                             && availability.areas.length > 0
@@ -142,7 +155,7 @@ const ScheduleRequest: React.FC<Props> = () => {
                               <Text key={`${area}-${index}`}>{area}</Text>
                             ))
                           }
-                        </Text>
+                        </View>
                       </View>
                       <View style={[styles.cardButtons]}>
                         <FontAwesome
@@ -182,8 +195,7 @@ const ScheduleRequest: React.FC<Props> = () => {
                   Select Availability
                 </Text>
                   {
-                    newGenAvail
-                    && newDateStep === 0
+                    newDateStep === 0
                     && (
                       <View>
                         <Text h4 style={[styles.textCenter]}>
@@ -192,19 +204,22 @@ const ScheduleRequest: React.FC<Props> = () => {
                         <View style={[styles.dateContainer]}>
                           <DateTimePicker
                             testID="dateTimePicker"
-                            value={new Date()}
+                            value={selectedDate ? new Date(selectedDate) : new Date()}
                             minimumDate={new Date()}
                             mode={'date'}
                             is24Hour={true}
-                            onChange={(value) => console.log(value.nativeEvent.timestamp)}
+                            onChange={(value) => {
+                              if (value.nativeEvent.timestamp) {
+                                setSelectedDate(new Date(value.nativeEvent.timestamp));
+                              }
+                            }}
                           />
                         </View>
                       </View>
                     )
                   }
                   {
-                    newGenAvail
-                    && newDateStep === 1
+                    newDateStep === 1
                     && (
                       <View>
                         <Text h4 style={[styles.textCenter]}>
@@ -213,18 +228,21 @@ const ScheduleRequest: React.FC<Props> = () => {
                         <View style={[styles.dateContainer]}>
                           <DateTimePicker
                             testID="timepick"
-                            value={new Date()}
+                            value={selectedStartTime ? new Date(selectedStartTime) : new Date()}
                             mode={'time'}
                             is24Hour={true}
-                            onChange={(value) => console.log(value.nativeEvent.timestamp)}
+                            onChange={(value) => {
+                              if (value.nativeEvent.timestamp) {
+                                setSelectedStartTime(new Date(value.nativeEvent.timestamp));
+                              }
+                            }}
                           />
                         </View>
                       </View>
                     )
                   }
                   {
-                    newGenAvail
-                    && newDateStep === 2
+                    newDateStep === 2
                     && (
                       <View>
                         <Text h4 style={[styles.textCenter]}>
@@ -233,18 +251,21 @@ const ScheduleRequest: React.FC<Props> = () => {
                         <View style={[styles.dateContainer]}>
                           <DateTimePicker
                             testID="endtimepick"
-                            value={new Date()}
+                            value={selectedEndTime ? new Date(selectedEndTime) : new Date()}
                             mode={'time'}
                             is24Hour={true}
-                            onChange={(value) => console.log(value)}
+                            onChange={(value) => {
+                              if (value.nativeEvent.timestamp) {
+                                setSelectedEndTime(new Date(value.nativeEvent.timestamp));
+                              }
+                            }}
                           />
                         </View>
                       </View>
                     )
                   }
                   {
-                    newGenAvail
-                    && newDateStep === 3
+                    newDateStep === 3
                     && (
                       <View>
                         <Text h4 style={[styles.textCenter]}>
@@ -259,13 +280,13 @@ const ScheduleRequest: React.FC<Props> = () => {
                                 key={`areas-${area}`}
                               >
                                 <ListItem.CheckBox
-                                  checked={newGenAvail.areas && newGenAvail.areas.length > 0 ? newGenAvail.areas.includes(area) : false}
+                                  checked={areas && areas.length > 0 ? areas.includes(area) : false}
                                   onIconPress={() => {
-                                    if (newGenAvail.areas.includes(area)) {
-                                      const newList = newGenAvail.areas.filter((item) => item !== area);
-                                      setNewGenAvail({ ...newGenAvail, areas: newList });
+                                    if (areas.includes(area)) {
+                                      const newList = areas.filter((item) => item !== area);
+                                      setAreas(newList);
                                     } else {
-                                      setNewGenAvail({ ...newGenAvail, areas: [area, ...newGenAvail.areas]})
+                                      setAreas([area, ...areas]);
                                     }
                                   }}
                                 />

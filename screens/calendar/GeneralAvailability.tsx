@@ -180,7 +180,7 @@ const GeneralAvailability: React.FC<Props> = () => {
                         <Text>
                           {`${availability.startHour}:${availability.startMinute} ${availability.startAMPM} – ${availability.finishHour}:${availability.startMinute} ${availability.finishAMPM}`}
                         </Text>
-                        <Text>
+                        <View>
                           {
                             availability.areas
                             && availability.areas.length > 0
@@ -188,7 +188,7 @@ const GeneralAvailability: React.FC<Props> = () => {
                               <Text key={`${area}-${index}`}>{area}</Text>
                             ))
                           }
-                        </Text>
+                        </View>
                       </View>
                       <View style={[styles.cardButtons]}>
                         <FontAwesome
