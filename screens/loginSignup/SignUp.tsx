@@ -44,10 +44,6 @@ const SignUp: React.FC<Props> = () => {
     }
   }, []);
 
-  useEffect(() => {
-    console.log(signupObject);
-  }, [signupObject]);
-
   const validityCheck = (phase: number) => {
     if (signupObject) {
       if (phase === 1) {

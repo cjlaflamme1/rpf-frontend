@@ -76,6 +76,8 @@ const SignUpStepTwo: React.FC<Props> = ({ signupModel }) => {
       <Image
         source={{ uri: "https://via.placeholder.com/150" }}
         style={{ width: 150, height: 150, marginBottom: 10 }}
+        height={150}
+        width={150}
       />
       <Button style={[styles.button]} title="Choose Photo" onPress={() => console.log('clicky')} />
       {/* {photo && (
