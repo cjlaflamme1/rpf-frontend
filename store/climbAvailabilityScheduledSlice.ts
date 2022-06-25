@@ -121,7 +121,12 @@ const deleteOneScheduledAvailAsync = createAsyncThunk(
 const climbAvailabilityScheduledSlice = createSlice({
   name: 'climbAvailabilityScheduled',
   initialState,
-  reducers: {},
+  reducers: {
+    clearScheduleAvailState(state) {
+      state.allScheduledAvailability = null;
+      state.selectedScheduledAvailability = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createClimbAvailabilityScheduledAsync.pending, (state) => {
@@ -189,6 +194,8 @@ const climbAvailabilityScheduledSlice = createSlice({
       });
   }
 })
+
+export const { clearScheduleAvailState } = climbAvailabilityScheduledSlice.actions;
 
 export default climbAvailabilityScheduledSlice.reducer;
 

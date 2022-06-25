@@ -124,7 +124,12 @@ const deleteOneGenAvailAsync = createAsyncThunk(
 const climbAvailabilityGenSlice = createSlice({
   name: 'climbAvailabilityGen',
   initialState,
-  reducers: {},
+  reducers: {
+    clearGenAvailState(state) {
+      state.allClimbGenAvailability = null;
+      state.selectedClimbGenAvailability = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createClimbAvailabilityGenAsync.pending, (state) => {
@@ -192,6 +197,8 @@ const climbAvailabilityGenSlice = createSlice({
       });
   }
 })
+
+export const { clearGenAvailState } = climbAvailabilityGenSlice.actions;
 
 export default climbAvailabilityGenSlice.reducer;
 

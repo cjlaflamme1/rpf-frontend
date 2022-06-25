@@ -16,14 +16,14 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
     climbAvailabilityScheduledState: state.climbAvailabilityScheduledState,
   }));
   const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(getAllclimbAvailabilityScheduledAsync());
+  }, []);
 
   if (!currentState.userState.currentUser) {
     return <View />
   }
 
-  useEffect(() => {
-    dispatch(getAllclimbAvailabilityScheduledAsync());
-  }, []);
 
   const { firstName, lastName } = currentState.userState.currentUser;
   const { allScheduledAvailability } = currentState.climbAvailabilityScheduledState;
@@ -53,7 +53,7 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
             <Text style= {[styles.profileWidgetItem]}>Partners Found</Text>
             <Badge
               containerStyle={[styles.profileWidgetItem]}
-              value="4"
+              value="0"
               status="primary"
             />
           </View>
@@ -69,7 +69,7 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
             <Text style= {[styles.profileWidgetItem]}>Upcoming meetups</Text>
             <Badge
               containerStyle={[styles.profileWidgetItem]}
-              value="2"
+              value="0"
               status="primary"
             />
           </View>

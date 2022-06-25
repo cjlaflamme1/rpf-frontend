@@ -1,13 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
 import { Button, Text } from 'react-native-elements';
 import { Image } from 'react-native-elements/dist/image/Image';
+import { clearGenAvailState } from '../../store/climbAvailabilityGenSlice';
+import { clearScheduleAvailState } from '../../store/climbAvailabilityScheduledSlice';
+import { useAppDispatch } from '../../store/hooks';
+import { clearUserState } from '../../store/userSlice';
 
 interface Props {
   navigation: any;
 };
 
 const LoginSignup: React.FC<Props> = ({ navigation }) => {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(clearUserState());
+    dispatch(clearGenAvailState());
+    dispatch(clearScheduleAvailState());
+  }, [])
   return (
     <View style={[styles.topContainer]}>
       <View style={[styles.centerContainer]}>
