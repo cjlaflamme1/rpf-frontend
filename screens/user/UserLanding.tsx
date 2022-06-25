@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, View, StyleSheet, ActivityIndicator } from 'react-native';
 import { Badge, Button, Switch, Text } from 'react-native-elements';
 import { Image } from 'react-native-elements';
-import { useAppSelector } from '../../store/hooks';
+import { getAllclimbAvailabilityScheduledAsync } from '../../store/climbAvailabilityScheduledSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 interface Props {
   navigation: any
@@ -12,12 +13,20 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
   const [checked, setChecked] = useState(true);
   const currentState = useAppSelector((state) => ({
     userState: state.userState,
+    climbAvailabilityScheduledState: state.climbAvailabilityScheduledState,
   }));
+  const dispatch = useAppDispatch();
 
   if (!currentState.userState.currentUser) {
     return <View />
   }
+
+  useEffect(() => {
+    dispatch(getAllclimbAvailabilityScheduledAsync());
+  }, []);
+
   const { firstName, lastName } = currentState.userState.currentUser;
+  const { allScheduledAvailability } = currentState.climbAvailabilityScheduledState;
   return (
     <View>
       <ScrollView>
@@ -51,7 +60,7 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
           <View style={[styles.profileWidgetRow]}>
             <Badge
               containerStyle={[styles.profileWidgetItem]}
-              value="8"
+              value={(allScheduledAvailability || []).length}
               status="primary"
             />
             <Text style= {[styles.profileWidgetItem]}>Requests Open</Text>

@@ -95,11 +95,46 @@ const ScheduleRequest: React.FC<Props> = () => {
     dispatch(getAllclimbAvailabilityScheduledAsync());
   }
 
+  const returnScheduledCalendar = () => {
+    const returnObject: any = {};
+    if (
+      allScheduledAvailability
+      && allScheduledAvailability.length > 0
+    ) {
+      allScheduledAvailability.map((avail) => {
+        const newDate = new Date(avail.startDateTime);
+        const formattedDate = new Date(newDate.getTime() - (newDate.getTimezoneOffset() * 60000)).toISOString().split("T")[0];
+        returnObject[formattedDate] = { dotColor: 'red', marked: true }
+      })
+    }
+    return returnObject;
+  }
+
+  const onCalendarClick = (clickData: any) => {
+    if (
+      allScheduledAvailability
+      && allScheduledAvailability.length > 0
+    ) {
+      const clickedDate = new Date(clickData.dateString).toISOString().split("T")[0];
+      const foundDate = allScheduledAvailability.find((avail) => {
+        const availDate = new Date(avail.startDateTime).toISOString().split("T")[0];
+        if (availDate === clickedDate) {
+          return avail;
+        }
+      })
+      if (foundDate) {
+        setExpanded(foundDate.id);
+      }
+    }
+  }
+
   return (
     <View>
       <ScrollView>
         <Calendar
           style={[styles.calendar]}
+          markedDates={returnScheduledCalendar()}
+          onDayPress={onCalendarClick}
         />
         <View style={[styles.buttonContainer]}>
           <Button
@@ -122,7 +157,13 @@ const ScheduleRequest: React.FC<Props> = () => {
                 isExpanded={expanded === availability.id}
                 hasTVPreferredFocus={undefined}
                 tvParallaxProperties={undefined}
-                onPress={() => setExpanded(availability.id)}
+                onPress={() => {
+                  if (expanded === availability.id) {
+                    setExpanded('');
+                  } else {
+                    setExpanded(availability.id)
+                  }
+                }}
                 content={
                   <>
                     <ListItem.Content style={[styles.accordion]}>

@@ -110,7 +110,7 @@ const GeneralAvailability: React.FC<Props> = () => {
         if (matchedDays && matchedDays.length > 0) {
           const formattedDate = `${currentYear}-${(currentMonth + 1).toLocaleString('en-US', {minimumIntegerDigits: 2})}-${(i + 1).toLocaleString('en-US', {minimumIntegerDigits: 2})}`;
           matchedDays.map((matchedAvail) => {
-            returnObject[formattedDate] = { color: 'green', marked: true }
+            returnObject[formattedDate] = { dotColor: 'green', marked: true }
           })
         }
       }
@@ -155,7 +155,13 @@ const GeneralAvailability: React.FC<Props> = () => {
                 isExpanded={expanded === availability.id}
                 hasTVPreferredFocus={undefined}
                 tvParallaxProperties={undefined}
-                onPress={() => setExpanded(availability.id)}
+                onPress={() => {
+                  if (expanded === availability.id) {
+                    setExpanded('');
+                  } else {
+                    setExpanded(availability.id)
+                  }
+                }}
                 content={
                   <>
                     <ListItem.Content style={[styles.accordion]}>

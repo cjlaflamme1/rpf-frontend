@@ -48,7 +48,6 @@ const getAllclimbAvailabilityScheduledAsync = createAsyncThunk(
   async (arg, { rejectWithValue }) => {
     try {
       const response: any = await getAllScheduledAvail();
-      console.log(response);
       if (response.data && response.data.length > 0) {
         const repacked = response.data.map((item: any) => {
           if (item.areas) {
