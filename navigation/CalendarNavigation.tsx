@@ -7,6 +7,7 @@ import CalendarLanding from '../screens/calendar/CalendarLanding';
 import GeneralAvailability from '../screens/calendar/GeneralAvailability';
 import ScheduleRequest from '../screens/calendar/ScheduleRequest';
 import BrowseRequests from '../screens/calendar/BrowseRequests';
+import ViewMatches from '../screens/calendar/ViewMatches';
 
 
 
@@ -55,6 +56,18 @@ const CalendarNavigation: React.FC = () => {
         <RootStack.Screen
           name="Browse Requests"
           component={BrowseRequests}
+          options={
+            {
+              contentStyle:
+              {
+                alignItems: 'center'
+              },
+            }
+          }
+        />
+        <RootStack.Screen
+          name="View Matches"
+          component={ViewMatches}
           options={
             {
               contentStyle:

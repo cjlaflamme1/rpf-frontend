@@ -17,7 +17,9 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
   }));
   const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(getAllclimbAvailabilityScheduledAsync());
+    if (currentState.userState.currentUser) {
+      dispatch(getAllclimbAvailabilityScheduledAsync());
+    }
   }, []);
 
   if (!currentState.userState.currentUser) {

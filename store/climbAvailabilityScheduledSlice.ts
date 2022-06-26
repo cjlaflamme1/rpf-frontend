@@ -9,6 +9,7 @@ export interface ClimbAvailabilityScheduled {
   endDateTime: Date;
   areas: string[];
   initialUser: User;
+  matches: ClimbAvailabilityScheduled[] | null;
 }
 
 interface climbAvailabilityScheduledState {

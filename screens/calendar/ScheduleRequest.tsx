@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Calendar } from 'react-native-calendars';
 import { Button, ListItem, Overlay, Text } from 'react-native-elements';
@@ -11,9 +12,11 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { daysOfWeek } from '../../assets/calendarVars/daysOfWeek';
 import { climbingAreas } from '../../assets/climbingVars/climbingAreas';
 
-interface Props {};
+interface Props {
+  navigation: any;
+};
 
-const ScheduleRequest: React.FC<Props> = () => {
+const ScheduleRequest: React.FC<Props> = ({ navigation }) => {
   const [expanded, setExpanded] = useState('');
   const [visible, setVisible] = useState(false);
   const [editId, setEditId] = useState('');
@@ -128,6 +131,12 @@ const ScheduleRequest: React.FC<Props> = () => {
     }
   }
 
+  const viewMatches = async (scheduleId: string) => {
+    console.log(scheduleId);
+    await dispatch(getOneClimbAvailScheduledAsync(scheduleId));
+    navigation.navigate('View Matches');
+  }
+
   return (
     <View>
       <ScrollView>
@@ -196,9 +205,44 @@ const ScheduleRequest: React.FC<Props> = () => {
                               <Text key={`${area}-${index}`}>{area}</Text>
                             ))
                           }
+                          {
+                            availability.matches
+                            && availability.matches.length > 0
+                            ? (
+                              <Pressable style={[styles.matchText]} onPress={() => viewMatches(availability.id)}>
+                                <Text>
+                                  {
+                                    availability.matches.length === 1
+                                    ? (
+                                      `${availability.matches.length} match found.`
+                                    ) : (
+                                      `${availability.matches.length} matches found.`
+                                    )
+                                  }
+                                </Text>
+                              </Pressable>
+                            ) : (
+                              <Text style={[styles.matchText]}>
+                                No matches found.
+                              </Text>
+                            )
+                          }
                         </View>
                       </View>
                       <View style={[styles.cardButtons]}>
+                        {
+                          availability.matches
+                          && availability.matches.length > 0
+                          && (
+                            <FontAwesome5
+                              style={[styles.cardIcon]}
+                              name="user-friends"
+                              size={24}
+                              color="black"
+                              onPress={() => viewMatches(availability.id)}
+                            />
+                          )
+                        }
                         <FontAwesome
                           style={[styles.cardIcon]}
                           name="edit"
@@ -403,7 +447,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   cardIcon: {
-    marginRight: 10,
+    marginRight: 15,
   },
   modalContainer: {
     width: '90%',
@@ -430,6 +474,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
   },
+  matchText: {
+    marginTop: 5,
+  }
 })
 
 export default ScheduleRequest;
