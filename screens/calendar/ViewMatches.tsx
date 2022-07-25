@@ -40,36 +40,36 @@ const ViewMatches: React.FC<Props> = () => {
           {
             matches
               .slice()
-              .map((match) => (
-                <Card containerStyle={[styles.cardContainer]}>
+              .map((match, index) => (
+                <Card containerStyle={[styles.cardContainer]} key={`${match.id}-${index}`}>
                   <Card.Title>
                     {`${match.initialUser.firstName} ${match.initialUser.lastName}`}
                   </Card.Title>
                   <Card.Divider />
                   <View style={[styles.cardContentContainer]}>
                     <View>
-                      <Text>
+                      <Text style={[styles.cardSection]}>
                         {`Start time: ${timeOnly(match.startDateTime)}`}
                       </Text>
-                      <Text>
+                      <Text style={[styles.cardSection]}>
                         {`End Time: ${timeOnly(match.endDateTime)}`}
                       </Text>
                       <View>
-                        <Text>
+                        <Text style={[styles.cardSection]}>
                           Areas:
                         </Text>
                         {
                           match.areas.map((area, index) => (
-                            <Text key={`${area}-${index}`}>{area}</Text>
+                            <Text style={[styles.areaItem]} key={`${area}-${index}`}>{area}</Text>
                           ))
                         }
                       </View>
                     </View>
                     <View>
-                      <Text>Icon</Text>
-                      <Text>{`${match.initialUser.firstName} ${match.initialUser.lastName}`}</Text>
-                      <Text>Link to Profile info</Text>
-                      <Text>Link to Climbing info</Text>
+                      <Text style={[styles.cardSection]}>Icon</Text>
+                      <Text style={[styles.cardSection]}>{`${match.initialUser.firstName} ${match.initialUser.lastName}`}</Text>
+                      <Text style={[styles.cardSection]}>Link to Profile info</Text>
+                      <Text style={[styles.cardSection]}>Link to Climbing info</Text>
                     </View>
                   </View>
                   <View style={[styles.sectionContainer]}>
@@ -121,6 +121,13 @@ const styles = StyleSheet.create({
   },
   cardButton: {
     width: '100%',
+    marginTop: 5,
+  },
+  cardSection: {
+    marginTop: 3,
+  },
+  areaItem: {
+    marginLeft: 5,
   }
 })
 
