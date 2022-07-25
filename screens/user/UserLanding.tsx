@@ -4,6 +4,7 @@ import { Badge, Button, Switch, Text } from 'react-native-elements';
 import { Image } from 'react-native-elements';
 import { getAllclimbAvailabilityScheduledAsync } from '../../store/climbAvailabilityScheduledSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { updateCurrentUserAsync } from '../../store/userSlice';
 
 interface Props {
   navigation: any
@@ -26,7 +27,17 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
     return <View />
   }
 
+  const changeFinderVisibility = (checked: boolean) => {
+    dispatch(updateCurrentUserAsync({
+      id: currentUser.id,
+      updateBody: {
+        finderVisibility: checked,
+      },
+    }))
+  }
 
+
+  const { currentUser } = currentState.userState;
   const { firstName, lastName } = currentState.userState.currentUser;
   const { allScheduledAvailability } = currentState.climbAvailabilityScheduledState;
   return (
@@ -45,8 +56,10 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
         <View style={[styles.profileWidgetContainer]}>
           <View style={[styles.profileWidgetRow]}>
             <Switch
-              value={checked}
-              onValueChange={(value) => setChecked(value)}
+              value={currentUser.finderVisibility}
+              onValueChange={(value) => {
+                changeFinderVisibility(value);
+              }}
               style= {[styles.profileWidgetItem]}
             />
             <Text style= {[styles.profileWidgetItem]}>Partner Finder Visibility</Text>

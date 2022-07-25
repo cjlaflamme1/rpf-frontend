@@ -5,12 +5,11 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Calendar } from 'react-native-calendars';
 import { Button, ListItem, Overlay, Text } from 'react-native-elements';
-import { Picker } from '@react-native-picker/picker';
 import { ScheduledAvailabilityModel } from '../../models/ScheduledAvailability';
 import { createClimbAvailabilityScheduledAsync, deleteOneScheduledAvailAsync, getAllclimbAvailabilityScheduledAsync, getOneClimbAvailScheduledAsync, updateOneScheduledAvailAsync } from '../../store/climbAvailabilityScheduledSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { daysOfWeek } from '../../assets/calendarVars/daysOfWeek';
 import { climbingAreas } from '../../assets/climbingVars/climbingAreas';
+import { timeOnly } from '../../helpers/timeAndDate';
 
 interface Props {
   navigation: any;
@@ -195,7 +194,7 @@ const ScheduleRequest: React.FC<Props> = ({ navigation }) => {
                     <View style={[styles.accordionCard]}>
                       <View>
                         <Text>
-                          {new Date(availability.startDateTime).toLocaleTimeString()}–{new Date(availability.endDateTime).toLocaleTimeString()}
+                          {timeOnly(new Date(availability.startDateTime))}–{timeOnly(new Date(availability.endDateTime))}
                         </Text>
                         <View>
                           {
