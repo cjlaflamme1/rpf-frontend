@@ -50,7 +50,8 @@ const RootNavigation: React.FC = () => {
                 {
                   contentStyle:
                   {
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    backgroundColor: '#9DBDC6',
                   },
                   title: 'Welcome',
                 }

@@ -18,6 +18,7 @@ const LoginSignup: React.FC<Props> = ({ navigation }) => {
     dispatch(clearGenAvailState());
     dispatch(clearScheduleAvailState());
   }, [])
+  const imageUri = "../../assets/rpf_icon_full.png";
   return (
     <View style={[styles.topContainer]}>
       <View style={[styles.centerContainer]}>
@@ -26,20 +27,21 @@ const LoginSignup: React.FC<Props> = ({ navigation }) => {
       </View>
       <View style={[styles.centerContainer]}>
         <Image
-        source={{uri: "https://via.placeholder.com/150"}}
-        style={{width: 150, height: 150}}
+          source={require(imageUri)}
+          style={{width: 150, height: 150}}
+          resizeMode={'center'}
         />
       </View>
       <View style={[styles.buttonContainer]}>
         <Button
-        title="Login"
-        buttonStyle={[styles.logInButton]}
-        onPress={() => navigation.navigate('SignIn')}
+          title="Login"
+          buttonStyle={[styles.logInButton]}
+          onPress={() => navigation.navigate('SignIn')}
         />
         <Button
-        title="Sign Up"
-        buttonStyle={[styles.logInButton]}
-        onPress={() => navigation.navigate('SignUp')}
+          title="Sign Up"
+          buttonStyle={[styles.logInButton]}
+          onPress={() => navigation.navigate('SignUp')}
         />
       </View>
     </View>
@@ -51,6 +53,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#9DBDC6',
   },
   centerContainer: {
     alignItems: 'center',
@@ -68,7 +71,8 @@ const styles = StyleSheet.create({
       android: {
         marginHorizontal: 20,
       }
-    })
+    }),
+    backgroundColor: '#CC1406',
   }
 })
 
