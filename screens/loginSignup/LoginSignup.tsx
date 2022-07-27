@@ -18,7 +18,7 @@ const LoginSignup: React.FC<Props> = ({ navigation }) => {
     dispatch(clearGenAvailState());
     dispatch(clearScheduleAvailState());
   }, [])
-  const imageUri = "../../assets/rpf_icon_full.png";
+  const imageUri = "../../assets/rpf_icon.png";
   return (
     <View style={[styles.topContainer]}>
       <View style={[styles.centerContainer]}>
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#9DBDC6',
+    backgroundColor: '#DAEAEF',
   },
   centerContainer: {
     alignItems: 'center',

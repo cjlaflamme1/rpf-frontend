@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { createClimbRequest } from '../api/climbRequestAPI';
+import { createClimbRequest, getAllClimbRequests, getOneClimbRequest } from '../api/climbRequestAPI';
 import { ClimbAvailabilityGen } from './climbAvailabilityGenSlice';
 import { ClimbAvailabilityScheduled } from './climbAvailabilityScheduledSlice';
 import { User } from './userSlice';
@@ -55,6 +55,36 @@ const createClimbRequestAsync = createAsyncThunk(
   },
 );
 
+const getAllClimbRequestsAsync = createAsyncThunk(
+  'climbRequest/getAll',
+  async (arg: any, { rejectWithValue }) => {
+    try {
+      const response: any = await getAllClimbRequests();
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue({
+        name: err.name,
+        message: err.message,
+      });
+    }
+  },
+);
+
+const getOneClimbRequestAsync = createAsyncThunk(
+  'climbRequest/getOne',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response: any = await getOneClimbRequest(id);
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue({
+        name: err.name,
+        message: err.message,
+      });
+    }
+  },
+)
+
 const climbRequestSlice = createSlice({
   name: 'climbRequest',
   initialState,
@@ -73,6 +103,32 @@ const climbRequestSlice = createSlice({
         state.status = 'failed';
         state.selectedClimbRequest = null;
         state.error = action.payload;
+      })
+      .addCase(getAllClimbRequestsAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(getAllClimbRequestsAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.allClimbRequests = action.payload;
+        state.error = null;
+      })
+      .addCase(getAllClimbRequestsAsync.rejected, (state, action) => {
+        state.status = 'failed';
+        state.allClimbRequests = null;
+        state.error = action.payload;
+      })
+      .addCase(getOneClimbRequestAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(getOneClimbRequestAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.selectedClimbRequest = action.payload;
+        state.error = null;
+      })
+      .addCase(getOneClimbRequestAsync.rejected, (state, action) => {
+        state.status = 'failed';
+        state.selectedClimbRequest = null;
+        state.error = action.payload;
       });
   }
 })
@@ -81,4 +137,6 @@ export default climbRequestSlice.reducer;
 
 export {
   createClimbRequestAsync,
+  getAllClimbRequestsAsync,
+  getOneClimbRequestAsync,
 }
