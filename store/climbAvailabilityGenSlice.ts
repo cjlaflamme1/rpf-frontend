@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { createGenAvail, deleteOneGenAvail, getAllGenAvail, getOneGenAvail, updateOneGenAvail } from '../api/climbAvailabilityGenAPI';
 import { GeneralAvailabilityModel } from '../models/GeneralAvailability';
+import { ClimbRequest } from './climbRequestSlice';
+import { User } from './userSlice';
 
 export interface ClimbAvailabilityGen {
   id: string;
@@ -11,6 +13,8 @@ export interface ClimbAvailabilityGen {
   finishHour: number;
   finishMinute: number;
   finishAMPM: 'AM' | 'PM';
+  incomingClimbRequests: ClimbRequest[] | null;
+  user: User;
   areas: string[];
 }
 

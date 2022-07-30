@@ -205,17 +205,21 @@ const ScheduleRequest: React.FC<Props> = ({ navigation }) => {
                             ))
                           }
                           {
-                            availability.matches
-                            && availability.matches.length > 0
+                            (availability.matches
+                            && availability.matches.length > 0) ||
+                            (
+                              availability.genMatches
+                            && availability.genMatches.length > 0
+                            )
                             ? (
                               <Pressable style={[styles.matchText]} onPress={() => viewMatches(availability.id)}>
                                 <Text>
                                   {
-                                    availability.matches.length === 1
+                                    (availability.matches || []).length + (availability.genMatches || []).length === 1
                                     ? (
-                                      `${availability.matches.length} match found.`
+                                      `${(availability.matches || []).length + (availability.genMatches || []).length} match found.`
                                     ) : (
-                                      `${availability.matches.length} matches found.`
+                                      `${(availability.matches || []).length + (availability.genMatches || []).length} matches found.`
                                     )
                                   }
                                 </Text>

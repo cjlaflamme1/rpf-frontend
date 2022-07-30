@@ -1,7 +1,7 @@
 import React from 'react';
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
 import { StyleSheet } from 'react-native';
+import { RootSiblingParent } from 'react-native-root-siblings';
 import RootNavigation from './navigation/RootNavigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
@@ -12,7 +12,9 @@ export default function App() {
     <NavigationContainer>
       <SafeAreaView style={style.safeArea}>
         <Provider store={store}>
-          <RootNavigation />
+          <RootSiblingParent>
+            <RootNavigation />
+          </RootSiblingParent>
         </Provider>
       </SafeAreaView>
     </NavigationContainer>

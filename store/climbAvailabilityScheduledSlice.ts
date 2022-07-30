@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { createScheduledAvail, deleteOneScheduledAvail, getAllScheduledAvail, getOneScheduledAvail, updateOneScheduledAvail } from '../api/climbAvailabilityScheduledAPI';
 import { ScheduledAvailabilityModel } from '../models/ScheduledAvailability';
+import { ClimbAvailabilityGen } from './climbAvailabilityGenSlice';
+import { ClimbRequest } from './climbRequestSlice';
 import { User } from './userSlice';
 
 export interface ClimbAvailabilityScheduled {
@@ -10,6 +12,9 @@ export interface ClimbAvailabilityScheduled {
   areas: string[];
   initialUser: User;
   matches: ClimbAvailabilityScheduled[] | null;
+  genMatches: ClimbAvailabilityGen[] | null;
+  climbRequests: ClimbRequest[] | null;
+  incomingClimbRequests: ClimbRequest[] | null;
 }
 
 interface climbAvailabilityScheduledState {
