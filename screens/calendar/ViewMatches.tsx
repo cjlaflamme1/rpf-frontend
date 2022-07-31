@@ -30,8 +30,8 @@ const ViewMatches: React.FC<Props> = () => {
     ) {
       return (
         <View>
-        <Text>No Matches Found</Text>
-      </View>
+          <Text>No Matches Found</Text>
+        </View>
     );
   }
   
@@ -72,7 +72,7 @@ const ViewMatches: React.FC<Props> = () => {
           {
             matches
             && matches.length > 0
-            && matches
+            ? matches
               .slice()
               .map((match, index) => (
                 <Card containerStyle={[styles.cardContainer]} key={`${match.id}-${index}`}>
@@ -130,6 +130,13 @@ const ViewMatches: React.FC<Props> = () => {
                   </View>
                 </Card>
               ))
+            : (
+              <Card containerStyle={[styles.cardContainer]}>
+                <Card.Title>
+                  No Matches Found
+                </Card.Title>
+              </Card>
+            )
           }
         </View>
         <View style={[styles.sectionContainer]}>
@@ -139,7 +146,7 @@ const ViewMatches: React.FC<Props> = () => {
         {
             genMatches
             && genMatches.length > 0
-            && genMatches
+            ? genMatches
               .slice()
               .map((match, index) => (
                 <Card containerStyle={[styles.cardContainer]} key={`${match.id}-${index}`}>
@@ -197,6 +204,13 @@ const ViewMatches: React.FC<Props> = () => {
                   </View>
                 </Card>
               ))
+            : (
+              <Card containerStyle={[styles.cardContainer]}>
+                <Card.Title>
+                  No Matches Found
+                </Card.Title>
+              </Card>
+            )
           }
         </View>
       </ScrollView>

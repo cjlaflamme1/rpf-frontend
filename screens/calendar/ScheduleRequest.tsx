@@ -35,7 +35,7 @@ const ScheduleRequest: React.FC<Props> = ({ navigation }) => {
     dispatch(getAllclimbAvailabilityScheduledAsync());
   }, []);
 
-  const { allScheduledAvailability, selectedScheduledAvailability } = currentState.climbAvailabilityScheduledState;
+  const { allScheduledAvailability } = currentState.climbAvailabilityScheduledState;
 
   const openOverlay = () => {
     setVisible(true);

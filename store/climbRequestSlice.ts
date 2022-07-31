@@ -57,9 +57,31 @@ const createClimbRequestAsync = createAsyncThunk(
 
 const getAllClimbRequestsAsync = createAsyncThunk(
   'climbRequest/getAll',
-  async (arg: any, { rejectWithValue }) => {
+  async (arg, { rejectWithValue }) => {
     try {
       const response: any = await getAllClimbRequests();
+      if (response.data && response.data.length > 0) {
+        response.data.map((req: any) => {
+          if (
+            req.initiatingEntry &&
+            req.initiatingEntry.areas
+          ) {
+            req.initiatingEntry.areas = JSON.parse(req.initiatingEntry.areas);
+          }
+          if (
+            req.targetScheduledRequest &&
+            req.targetScheduledRequest.areas
+          ) {
+            req.targetScheduledRequest.areas = JSON.parse(req.targetScheduledRequest.areas);
+          }
+          if (
+            req.targetGenRequest &&
+            req.targetGenRequest.areas
+          ) {
+            req.targetGenRequest.areas = JSON.parse(req.targetGenRequest.areas);
+          }
+        })
+      }
       return response.data;
     } catch (err: any) {
       return rejectWithValue({
@@ -75,6 +97,24 @@ const getOneClimbRequestAsync = createAsyncThunk(
   async (id: string, { rejectWithValue }) => {
     try {
       const response: any = await getOneClimbRequest(id);
+      if (
+        response.data.initiatingEntry &&
+        response.data.initiatingEntry.areas
+      ) {
+        response.data.initiatingEntry.areas = JSON.parse(response.data.initiatingEntry.areas);
+      }
+      if (
+        response.data.targetScheduledRequest &&
+        response.data.targetScheduledRequest.areas
+      ) {
+        response.data.targetScheduledRequest.areas = JSON.parse(response.data.targetScheduledRequest.areas);
+      }
+      if (
+        response.data.targetGenRequest &&
+        response.data.targetGenRequest.areas
+      ) {
+        response.data.targetGenRequest.areas = JSON.parse(response.data.targetGenRequest.areas);
+      }
       return response.data;
     } catch (err: any) {
       return rejectWithValue({
