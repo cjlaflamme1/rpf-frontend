@@ -128,7 +128,11 @@ const getOneClimbRequestAsync = createAsyncThunk(
 const climbRequestSlice = createSlice({
   name: 'climbRequest',
   initialState,
-  reducers: {},
+  reducers: {
+    clearSelectedRequest(state) {
+      state.selectedClimbRequest = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createClimbRequestAsync.pending, (state) => {
@@ -172,6 +176,8 @@ const climbRequestSlice = createSlice({
       });
   }
 })
+
+export const { clearSelectedRequest } = climbRequestSlice.actions;
 
 export default climbRequestSlice.reducer;
 
