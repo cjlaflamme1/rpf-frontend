@@ -4,7 +4,7 @@ import { View, StyleSheet, ScrollView, TextInput, Pressable } from 'react-native
 import { Calendar } from 'react-native-calendars';
 import { Button, Card, Text, Overlay } from 'react-native-elements';
 import { dateOnly, timeOnly } from '../../helpers/timeAndDate';
-import { clearSelectedRequest, getAllClimbRequestsAsync, getOneClimbRequestAsync } from '../../store/climbRequestSlice';
+import { clearSelectedRequest, getAllClimbRequestsAsync, getOneClimbRequestAsync, updateOneClimbRequestAsync } from '../../store/climbRequestSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -43,7 +43,21 @@ const BrowseRequests: React.FC<Props> = () => {
     setTextResponse('');
     setSelectResponse('')
     setVisible(false);
-  }
+  };
+
+  const submitResponse = async () => {
+    if (selectedClimbRequest && selectResponse) {
+      await dispatch(updateOneClimbRequestAsync({
+        id: selectedClimbRequest.id,
+        updateBody: {
+          targetMessageResponse: textResponse,
+          targetAccepted: selectResponse === 'yes',
+        }
+      }));
+      dispatch(getAllClimbRequestsAsync());
+      closeMatch();
+    }
+  };
 
   return (
     <View>
@@ -59,7 +73,18 @@ const BrowseRequests: React.FC<Props> = () => {
             .map((request, index) => (
               <Card containerStyle={[styles.cardContainer]} key={`${request.id}-${index}`}>
                 <Card.Title>
-                  {`From: ${request.initiatingUser.firstName} ${request.initiatingUser.lastName} for  ${dateOnly(request.initiatingEntry.startDateTime)}`}
+                  {
+                    request.targetAccepted === null &&
+                    <>{`From: ${request.initiatingUser.firstName} ${request.initiatingUser.lastName} for  ${dateOnly(request.initiatingEntry.startDateTime)}`}</>
+                  }
+                  {
+                    request.targetAccepted === true &&
+                    <>Request Accepted</>
+                  }
+                  {
+                    request.targetAccepted === false &&
+                    <>Request Denied</>
+                  }
                 </Card.Title>
                 <Card.Divider />
                 <View style={[styles.cardContentContainer]}>
@@ -145,9 +170,14 @@ const BrowseRequests: React.FC<Props> = () => {
                 </View>
                 <View style={[styles.sectionContainer]}>
                   <Button
+                    disabled={request.targetAccepted !== null}
                     onPress={() => openMatch(request.id)}
                     containerStyle={[styles.cardButton]}
-                    title="Respond to request"
+                    title={
+                      request.targetAccepted === null
+                        ? "Respond to request"
+                        : "Response submitted"
+                    }
                   />
                 </View>
               </Card>
@@ -286,11 +316,16 @@ const BrowseRequests: React.FC<Props> = () => {
                   />
                 </View>
               </View>
-              <View>
+              <View style={[styles.buttonContainer, styles.doubleButtonContainer]}>
                 <Button
-                  onPress={() => closeMatch()}
-                  containerStyle={[styles.cardButton]}
-                  title="Submit Response"
+                  title="Cancel"
+                  containerStyle={[styles.matchButton]}
+                  onPress={closeMatch}
+                />
+                <Button
+                  onPress={submitResponse}
+                  containerStyle={[styles.matchButton]}
+                  title="Submit"
                 />
               </View>
             </View>
@@ -306,9 +341,17 @@ const styles = StyleSheet.create({
     minWidth: '95%',
     marginTop: 10,
   },
+  doubleButtonContainer: {
+    flexDirection: 'row',
+  },
   buttonContainer: {
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  matchButton: {
+    width: 150,
+    maxWidth: '95%',
+    margin: 10,
   },
   sectionContainer: {
     marginTop: 5,
