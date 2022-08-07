@@ -70,18 +70,16 @@ const SignUp: React.FC<Props> = () => {
   const signupClick = async () => {
     if (signupObject) {
       await dispatch(signUpAsync(signupObject));
-      dispatch(getCurrentUserAsync());
       if (photo) {
         const preAuthPostUrl = await postPresignedUrl({ fileName: signupObject.profilePhoto, fileType: photo.type}).then((response) => response).catch((e) => {
           console.log(e);
           return e;
         });
         if (preAuthPostUrl.status === 201 && preAuthPostUrl.data) {
-          console.log(photo);
-          putImageOnS3(preAuthPostUrl.data, photo).catch((e) => console.log(e));
+          await putImageOnS3(preAuthPostUrl.data, photo, photo.type).catch((e) => console.log(e));
         }
-        console.log(preAuthPostUrl);
       }
+      dispatch(getCurrentUserAsync());
     };
   }
 

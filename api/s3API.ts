@@ -33,15 +33,15 @@ export function postPresignedUrl(imageData: { fileName: string; fileType: string
   })
 }
 
-export function putImageOnS3(preAuthURL: any, image: File) {
+export function putImageOnS3(preAuthURL: any, image: File | Buffer, fileType: string) {
   return new Promise<AxiosPromise>((resolve, reject) => {
     try {
-      s3Api.defaults.headers.common['Content-Type'] = image.type;
-      s3Api.defaults.headers.put['Content-Type'] = image.type;
+      s3Api.defaults.headers.common['Content-Type'] = fileType;
+      s3Api.defaults.headers.put['Content-Type'] = fileType;
       s3Api.put(preAuthURL, image, {
         headers: {
-          'accept': image.type,
-          'content-type': image.type,
+          'accept': fileType,
+          'content-type': fileType,
         }
       })
         .then((response: any) => {

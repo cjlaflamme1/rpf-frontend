@@ -1,4 +1,5 @@
 export interface ClimberProfile {
+  id?: string;
   trOnly: boolean;
   leadCapable: boolean;
   boulderer: boolean;
@@ -11,4 +12,5 @@ export interface ClimberProfile {
   boulderWarmup?: string;
   boulderOnsight?: string;
   boulderRedpoint?: string;
+  climberBio?: string;
 }

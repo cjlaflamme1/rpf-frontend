@@ -5,13 +5,15 @@ import { ClimberProfile } from '../models/ClimberProfile';
 
 export interface User {
   id: string;
-  climbingProfile: ClimberProfile;
+  climbingProfile: ClimberProfile | Partial<ClimberProfile>;
   email: string;
   firstName: string;
   lastName: string;
   profilePhoto?: string;
   finderVisibility: boolean;
   imageGetURL?: string;
+  location: string | null;
+  shortBio: string | null;
 }
 
 interface UserState {
@@ -31,12 +33,12 @@ const getCurrentUserAsync = createAsyncThunk(
   async (arg, { rejectWithValue }) => {
     try {
       const response: any = await getCurrentUser();
-      if (response.data.profilePhoto) {
-        const profilePhotoUrl = await getPresignedUrl(response.data.profilePhoto);
-        if (profilePhotoUrl.data) {
-          response.data.profilePhotoUrl = profilePhotoUrl.data;
-        }
-      }
+      // if (response.data.profilePhoto) {
+      //   const profilePhotoUrl = await getPresignedUrl(response.data.profilePhoto);
+      //   if (profilePhotoUrl.data) {
+      //     response.data.profilePhotoUrl = profilePhotoUrl.data;
+      //   }
+      // }
       return response.data;
     } catch (err: any) {
       rejectWithValue({
