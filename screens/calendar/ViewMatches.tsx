@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
-import { ScrollView, View, StyleSheet, ActivityIndicator } from 'react-native';
-import { Button, Card, Text } from 'react-native-elements';
+import { ScrollView, View, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
+import { Button, Card, Overlay, Text } from 'react-native-elements';
 import Toast from 'react-native-root-toast';
 import { dateOnly, timeOnly } from '../../helpers/timeAndDate';
 import { ClimbAvailabilityGen } from '../../store/climbAvailabilityGenSlice';
 import { ClimbAvailabilityScheduled } from '../../store/climbAvailabilityScheduledSlice';
 import { createClimbRequestAsync } from '../../store/climbRequestSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { User } from '../../store/userSlice';
+import ClimbingProfile from '../user/ClimbingProfile';
+import PersonalProfile from '../user/PersonalProfile';
 
 interface Props { };
 
 const ViewMatches: React.FC<Props> = () => {
   const [showToast, setShowToast] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [climbingOverlay, setClimbingOverlay] = useState(false);
+  const [otherUserProfile, setOtherUserProfile] = useState<User>();
   const currentState = useAppSelector((state) => ({
     climbAvailabilityScheduledState: state.climbAvailabilityScheduledState,
   }));
@@ -33,6 +39,26 @@ const ViewMatches: React.FC<Props> = () => {
           <Text>No Matches Found</Text>
         </View>
     );
+  }
+
+  const openProfile = (userProfile: User) => {
+    setOtherUserProfile(userProfile);
+    setVisible(true);
+  };
+
+  const closeProfile = () => {
+    setOtherUserProfile(undefined);
+    setVisible(false);
+  }
+
+  const openClimbingProfile = (userProfile: User) => {
+    setOtherUserProfile(userProfile);
+    setClimbingOverlay(true);
+  }
+
+  const closeClimbingProfile = () => {
+    setOtherUserProfile(undefined);
+    setClimbingOverlay(false);
   }
   
   const submitSchedMatchRequest = async (match: ClimbAvailabilityScheduled) => {
@@ -102,8 +128,12 @@ const ViewMatches: React.FC<Props> = () => {
                     <View>
                       <Text style={[styles.cardSection]}>Icon</Text>
                       <Text style={[styles.cardSection]}>{`${match.initialUser.firstName} ${match.initialUser.lastName}`}</Text>
-                      <Text style={[styles.cardSection]}>Link to Profile info</Text>
-                      <Text style={[styles.cardSection]}>Link to Climbing info</Text>
+                      <Pressable onPress={() => openProfile(match.initialUser)}>
+                        <Text style={[styles.cardSection]}>Link to Profile info</Text>
+                      </Pressable>
+                      <Pressable onPress={() => openClimbingProfile(match.initialUser)}>
+                        <Text style={[styles.cardSection]}>Link to Climbing info</Text>
+                      </Pressable>
                     </View>
                   </View>
                   <View style={[styles.sectionContainer]}>
@@ -213,6 +243,24 @@ const ViewMatches: React.FC<Props> = () => {
             )
           }
         </View>
+        <View>
+          <Overlay
+            onBackdropPress={closeProfile}
+            isVisible={visible}
+            overlayStyle={[styles.modalContainer]}
+          >
+            <PersonalProfile otherUser={otherUserProfile} />
+          </Overlay>
+        </View>
+        <View>
+          <Overlay
+            onBackdropPress={closeClimbingProfile}
+            isVisible={climbingOverlay}
+            overlayStyle={[styles.modalContainer]}
+          >
+            <ClimbingProfile otherUser={otherUserProfile} />
+          </Overlay>
+        </View>
       </ScrollView>
     </View>
   )
@@ -221,6 +269,9 @@ const ViewMatches: React.FC<Props> = () => {
 const styles = StyleSheet.create({
   pageContainer: {
     marginTop: 10,
+  },
+  modalContainer: {
+    width: '90%',
   },
   sectionContainer: {
     marginTop: 5,

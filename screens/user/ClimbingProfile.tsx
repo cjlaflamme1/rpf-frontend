@@ -236,7 +236,7 @@ const ClimbingProfile: React.FC<Props> = ({ otherUser }) => {
               </View>
               <View style={[styles.sectionContainer]}>
                 <Text style={[styles.h4Heading]} h4>Climbing Bio</Text>
-                <Text>{otherUser.climbingProfile.climberBio}</Text>
+                <Text>{otherUser.climbingProfile.climberBio || 'No bio provided. Womp womp.'}</Text>
               </View>
               <View style={[styles.inputContainer]}>
                 <View>
@@ -266,9 +266,9 @@ const ClimbingProfile: React.FC<Props> = ({ otherUser }) => {
                   <Text style={[styles.dropdownLabel]}>Redpoint</Text>
                 </View>
                 <View style={styles.dropdownContainer}>
-                  <Text style={styles.dropdownItem}>{selectorValue('warmup')}</Text>
-                  <Text style={styles.dropdownItem}>{selectorValue('onsight')}</Text>
-                  <Text style={styles.dropdownItem}>{selectorValue('redpoint')}</Text>
+                  <Text style={[styles.dropdownItem, { textAlign: 'center' }]}>{selectorValue('warmup')}</Text>
+                  <Text style={[styles.dropdownItem, { textAlign: 'center' }]}>{selectorValue('onsight')}</Text>
+                  <Text style={[styles.dropdownItem, { textAlign: 'center' }]}>{selectorValue('redpoint')}</Text>
                 </View>
               </View>
             </View>

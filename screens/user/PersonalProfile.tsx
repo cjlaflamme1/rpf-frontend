@@ -159,11 +159,11 @@ const PersonalProfile: React.FC<Props> = ({ otherUser }) => {
           </View>
           <View style={[styles.sectionContainer]}>
             <Text style={[styles.h4Heading]} h4>Current Location</Text>
-            <Text>{otherUser.location}</Text>
+            <Text>{otherUser.location || 'No location provided.'}</Text>
           </View>
           <View style={[styles.sectionContainer]}>
             <Text style={[styles.h4Heading]} h4>Short Bio</Text>
-            <Text>{otherUser.shortBio}</Text>
+            <Text>{otherUser.shortBio || 'No bio provided. :('}</Text>
           </View>
         </ScrollView>
       </View>
