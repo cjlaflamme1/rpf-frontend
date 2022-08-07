@@ -44,13 +44,29 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
     <View>
       <ScrollView>
         <View style={[styles.imageContainer]}>
-          <Image
-            containerStyle={[styles.imageBase]}
-            source={{ uri: 'https://via.placeholder.com/150' }}
-            PlaceholderContent={<ActivityIndicator />}
-            height={150}
-            width={150}
-          />
+          {
+            currentUser.imageGetURL
+            && currentUser.imageGetURL.length > 0
+              ? (
+                <Image
+                  containerStyle={[styles.imageBase]}
+                  style={[styles.image]}
+                  source={{ uri: currentUser.imageGetURL }}
+                  PlaceholderContent={<ActivityIndicator />}
+                  height={150}
+                  width={150}
+                />
+              )
+              : (
+                <Image
+                  containerStyle={[styles.imageBase]}
+                  source={{ uri: 'https://via.placeholder.com/150' }}
+                  PlaceholderContent={<ActivityIndicator />}
+                  height={150}
+                  width={150}
+                />
+              )
+          }
           <Text style={[styles.profileName]}> {`${firstName} ${lastName}`} </Text>
         </View>
         <View style={[styles.profileWidgetContainer]}>
@@ -114,10 +130,14 @@ const styles = StyleSheet.create({
   },
   imageBase: {
     aspectRatio: 1,
-    width: '100%',
+    width: "100%",
     maxWidth: 150,
     maxHeight: 150,
     flex: 1,
+  },
+  image: {
+    width: 150,
+    height: 150,
   },
   profileName: {
     fontSize: 24,

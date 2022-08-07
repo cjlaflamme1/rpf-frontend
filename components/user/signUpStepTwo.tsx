@@ -1,59 +1,56 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
 import { Button, Input, Image } from 'react-native-elements';
-import { launchImageLibrary } from 'react-native-image-picker';
+import * as ImagePicker from 'expo-image-picker';
 import { SignupObject } from '../../models/SignupObject';
+import * as FileSystem from "expo-file-system";
+import { postPresignedUrl } from '../../api/s3API';
+import {Buffer} from "buffer";
 
 interface Props {
   signupModel: {
     signupObject: SignupObject;
     setSignupObject: Function;
+  },
+  photo: {
+    photo: File | undefined;
+    setPhoto: Function;
   }
 };
 
-const SignUpStepTwo: React.FC<Props> = ({ signupModel }) => {
+const SignUpStepTwo: React.FC<Props> = ({ signupModel, photo }) => {
   const { signupObject, setSignupObject } = signupModel;
-  const [photo, setPhoto] = useState(null);
-  /*
-    const createFormData = (photo, body = {}) => {
-      const data = new FormData();
+  const [image, setImage] = useState<{ localUri: string }>();
+
+  const fetchImageFromUri = async (uri: string) => {
+    const response = await fetch(uri);
+    console.log(response);
+    const blob = await response.blob();
+    console.log(blob);
+    return blob;
+  };
   
-      data.append('photo', {
-        name: photo.fileName,
-        type: photo.type,
-        uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (result.cancelled === false) {
+      const imageExt = result.uri.split('.').pop();
+      const imageFileName = signupObject.email.split('@')[0];
+      const base64 = await FileSystem.readAsStringAsync(result.uri, {
+        encoding: FileSystem.EncodingType.Base64,
       });
-  
-      Object.keys(body).forEach((key) => {
-        data.append(key, body[key]);
-      });
-  
-      return data;
+      const buff = Buffer.from(base64, "base64");
+      photo.setPhoto(buff);
+      setImage({ localUri: result.uri });
+      setSignupObject({ ...signupObject, profilePhoto: `${imageFileName}.${imageExt}` });
     };
-  
-    const handleChoosePhoto = () => {
-      launchImageLibrary({ noData: true }, (response) => {
-        // console.log(response);
-        if (response) {
-          setPhoto(response);
-        }
-      });
-    };
-  
-    const handleUploadPhoto = () => {
-      fetch(`${SERVER_URL}/api/upload`, {
-        method: 'POST',
-        body: createFormData(photo, { userId: '123' }),
-      })
-        .then((response) => response.json())
-        .then((response) => {
-          console.log('response', response);
-        })
-        .catch((error) => {
-          console.log('error', error);
-        });
-    }; Upload images: https://www.reactnativeschool.com/how-to-upload-images-from-react-native
-    */
+  };
 
   return (
     <View style={[styles.inputContainer]}>
@@ -73,23 +70,15 @@ const SignUpStepTwo: React.FC<Props> = ({ signupModel }) => {
         onChangeText={(text) => setSignupObject({ ...signupObject, lastName: text })}
         autoCorrect={false}
         inputContainerStyle={[styles.inputContainer]} />
-      <Image
-        source={{ uri: "https://via.placeholder.com/150" }}
-        style={{ width: 150, height: 150, marginBottom: 10 }}
-        height={150}
-        width={150}
-      />
-      <Button style={[styles.button]} title="Choose Photo" onPress={() => console.log('clicky')} />
-      {/* {photo && (
-        <>
+      {image && (
           <Image
-            source={{ uri: photo.uri }}
-            style={{ width: 300, height: 300 }}
+            source={{ uri: image.localUri }}
+            style={{ width: 150, height: 150 }}
+            height={150}
+            width={150} 
           />
-          <Button title="Upload Photo" onPress={handleUploadPhoto} />
-        </>
       )}
-      <Button title="Choose Photo" onPress={handleChoosePhoto} /> */}
+      <Button style={[styles.button]} title="Choose Photo" onPress={pickImage} />
     </View>
   )
 };

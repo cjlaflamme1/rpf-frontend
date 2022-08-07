@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { getPresignedUrl } from '../api/s3API';
 import { getCurrentUser, updateCurrentUser } from '../api/userAPI';
 import { ClimberProfile } from '../models/ClimberProfile';
 
@@ -10,6 +11,7 @@ export interface User {
   lastName: string;
   profilePhoto?: string;
   finderVisibility: boolean;
+  imageGetURL?: string;
 }
 
 interface UserState {
@@ -29,6 +31,12 @@ const getCurrentUserAsync = createAsyncThunk(
   async (arg, { rejectWithValue }) => {
     try {
       const response: any = await getCurrentUser();
+      if (response.data.profilePhoto) {
+        const profilePhotoUrl = await getPresignedUrl(response.data.profilePhoto);
+        if (profilePhotoUrl.data) {
+          response.data.profilePhotoUrl = profilePhotoUrl.data;
+        }
+      }
       return response.data;
     } catch (err: any) {
       rejectWithValue({

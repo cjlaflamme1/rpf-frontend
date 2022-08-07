@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Switch, View } from 'react-native';
 import { Text, Input, Button } from 'react-native-elements';
+import { postPresignedUrl, putImageOnS3 } from '../../api/s3API';
 import SignUpStepOne from '../../components/user/signUpStepOne';
 import SignUpStepThree from '../../components/user/signUpStepThree';
 import SignUpStepTwo from '../../components/user/signUpStepTwo';
@@ -14,6 +15,7 @@ interface Props { };
 const SignUp: React.FC<Props> = () => {
   const [signupPhase, setSignUpPhase] = useState(1);
   const [errors, setErrors] = useState(true);
+  const [photo, setPhoto] = useState<File>();
   const [signupObject, setSignupObject] = useState<SignupObject>();
 
   const dispatch = useAppDispatch();
@@ -69,6 +71,17 @@ const SignUp: React.FC<Props> = () => {
     if (signupObject) {
       await dispatch(signUpAsync(signupObject));
       dispatch(getCurrentUserAsync());
+      if (photo) {
+        const preAuthPostUrl = await postPresignedUrl({ fileName: signupObject.profilePhoto, fileType: photo.type}).then((response) => response).catch((e) => {
+          console.log(e);
+          return e;
+        });
+        if (preAuthPostUrl.status === 201 && preAuthPostUrl.data) {
+          console.log(photo);
+          putImageOnS3(preAuthPostUrl.data, photo).catch((e) => console.log(e));
+        }
+        console.log(preAuthPostUrl);
+      }
     };
   }
 
@@ -94,6 +107,7 @@ const SignUp: React.FC<Props> = () => {
             && (
               <SignUpStepTwo
                 signupModel={{ signupObject, setSignupObject }}
+                photo={{ photo, setPhoto }}
               />
             )
           }
