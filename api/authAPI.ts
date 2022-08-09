@@ -6,7 +6,7 @@ export function signUp(newUser: SignupObject) {
   return new Promise<AxiosPromise>((resolve, reject) => {
     try {
       api
-        .post('auth/signup', newUser)
+        .post('/auth/signup', newUser)
         .then((response: any) => {
           resolve(response);
         })
@@ -23,7 +23,7 @@ export function login(signInObject: {email: string, password: string}) {
   return new Promise<AxiosPromise>((resolve, reject) => {
     try {
       api
-        .post('auth/login', signInObject)
+        .post('/auth/login', signInObject)
         .then((response: any) => {
           resolve(response);
         })
