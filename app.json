@@ -29,7 +29,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
+      "bunderIdentifier": "com.nhclimbingpartners",
+      "supportsTablet": false,
       "backgroundColor": "#9DBDC6"
     },
     "android": {
