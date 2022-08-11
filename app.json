@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "rpf-frontend",
+    "name": "NH Climbing Partners",
     "plugins": [
       [
         "expo-camera"
@@ -12,7 +12,7 @@
         }
       ]
     ],
-    "slug": "rpf-frontend",
+    "slug": "NH-Climbing-Partners",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/rpf_icon.png",
@@ -29,7 +29,7 @@
       "**/*"
     ],
     "ios": {
-      "bunderIdentifier": "com.nhclimbingpartners",
+      "bundleIdentifier": "com.nhclimbingpartners",
       "supportsTablet": false,
       "backgroundColor": "#9DBDC6"
     },
