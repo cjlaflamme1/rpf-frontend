@@ -1,12 +1,13 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import UserLanding from '../screens/user/UserLanding';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import ProfileNavigation from './ProfileNavigation';
 import CalendarNavigation from './CalendarNavigation';
 import Settings from '../screens/settings/Settings';
 import SettingsNavigation from './SettingsNavigation';
+import MeetupNavigation from './MeetupNavigation';
 
 const Tab = createBottomTabNavigator();
 
@@ -32,6 +33,18 @@ const TabNavigator: React.FC = () => {
           tabBarLabel: 'Calendar',
           tabBarIcon: ({ focused, color, size }) => {
             return <MaterialCommunityIcons focused={focused} name="calendar" size={size} color={color} />
+          },
+          headerShown: false,
+        }}
+        
+      />
+      <Tab.Screen
+        name="Meetups"
+        component={MeetupNavigation}
+        options={{
+          tabBarLabel: 'Meetups',
+          tabBarIcon: ({ focused, color, size }) => {
+            return <FontAwesome5 focused={focused} name="user-friends" size={size} color={color} />
           },
           headerShown: false,
         }}

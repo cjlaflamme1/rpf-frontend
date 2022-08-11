@@ -1,8 +1,5 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import UserLanding from '../screens/user/UserLanding';
-import PersonalProfile from '../screens/user/PersonalProfile';
-import ClimbingProfile from '../screens/user/ClimbingProfile';
 import CalendarLanding from '../screens/calendar/CalendarLanding';
 import GeneralAvailability from '../screens/calendar/GeneralAvailability';
 import ScheduleRequest from '../screens/calendar/ScheduleRequest';
