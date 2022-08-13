@@ -4,7 +4,7 @@ import { Button, Card, Overlay, Text } from 'react-native-elements';
 import Toast from 'react-native-root-toast';
 import { dateOnly, timeOnly } from '../../helpers/timeAndDate';
 import { ClimbAvailabilityGen } from '../../store/climbAvailabilityGenSlice';
-import { ClimbAvailabilityScheduled } from '../../store/climbAvailabilityScheduledSlice';
+import { ClimbAvailabilityScheduled, getAllclimbAvailabilityScheduledAsync } from '../../store/climbAvailabilityScheduledSlice';
 import { createClimbRequestAsync } from '../../store/climbRequestSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { User } from '../../store/userSlice';
@@ -68,6 +68,7 @@ const ViewMatches: React.FC<Props> = () => {
       targetScheduledReqId: match.id,
       targetUserId: match.initialUser.id,
     }));
+    dispatch(getAllclimbAvailabilityScheduledAsync());
     setShowToast(true);
   };
 
@@ -78,6 +79,7 @@ const ViewMatches: React.FC<Props> = () => {
       targetGenRequestId: match.id,
       targetUserId: match.user.id,
     }));
+    dispatch(getAllclimbAvailabilityScheduledAsync());
     setShowToast(true);
   };
   const { matches, genMatches } = selectedScheduledAvailability;
