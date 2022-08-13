@@ -56,6 +56,40 @@ const ClimbingProfile: React.FC<Props> = ({ otherUser }) => {
     }
   }
 
+  const otherUserSelectorValue = (attemptStyle: string) => {
+    if(otherUser) {
+      if (attemptStyle === 'warmup') {
+        switch (selectedBox) {
+          case 'tr':
+            return otherUser.climbingProfile.trWarmup;
+          case 'lead':
+            return otherUser.climbingProfile.leadWarmup;
+          case 'boulder':
+            return otherUser.climbingProfile.boulderWarmup;
+        }
+      } else if (attemptStyle === 'onsight') {
+        switch (selectedBox) {
+          case 'tr':
+            return otherUser.climbingProfile.trOnsight;
+          case 'lead':
+            return otherUser.climbingProfile.leadOnsight;
+          case 'boulder':
+            return otherUser.climbingProfile.boulderOnsight;
+        }
+      } else if (attemptStyle === 'redpoint') {
+        switch (selectedBox) {
+          case 'tr':
+            return otherUser.climbingProfile.trRedpoint;
+          case 'lead':
+            return otherUser.climbingProfile.leadRedpoint;
+          case 'boulder':
+            return otherUser.climbingProfile.boulderRedpoint;
+        }
+      }
+    }
+    return '';
+  }
+
   const setWarmup = (input: string) => {
     switch (selectedBox) {
       case 'tr':
@@ -266,9 +300,9 @@ const ClimbingProfile: React.FC<Props> = ({ otherUser }) => {
                   <Text style={[styles.dropdownLabel]}>Redpoint</Text>
                 </View>
                 <View style={styles.dropdownContainer}>
-                  <Text style={[styles.dropdownItem, { textAlign: 'center' }]}>{selectorValue('warmup')}</Text>
-                  <Text style={[styles.dropdownItem, { textAlign: 'center' }]}>{selectorValue('onsight')}</Text>
-                  <Text style={[styles.dropdownItem, { textAlign: 'center' }]}>{selectorValue('redpoint')}</Text>
+                  <Text style={[styles.dropdownItem, { textAlign: 'center' }]}>{otherUserSelectorValue('warmup')}</Text>
+                  <Text style={[styles.dropdownItem, { textAlign: 'center' }]}>{otherUserSelectorValue('onsight')}</Text>
+                  <Text style={[styles.dropdownItem, { textAlign: 'center' }]}>{otherUserSelectorValue('redpoint')}</Text>
                 </View>
               </View>
             </View>
