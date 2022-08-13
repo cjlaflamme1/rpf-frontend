@@ -7,6 +7,7 @@ import { dateOnly, timeOnly } from '../../helpers/timeAndDate';
 import { clearSelectedRequest, getAllClimbRequestsAsync, getOneClimbRequestAsync, updateOneClimbRequestAsync } from '../../store/climbRequestSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { Ionicons } from '@expo/vector-icons';
+import { createClimbMeetupAsync, getAllClimbMeetupsAsync } from '../../store/climbMeetupSlice';
 
 interface Props {};
 
@@ -47,7 +48,7 @@ const BrowseRequests: React.FC<Props> = () => {
 
   const submitResponse = async () => {
     if (selectedClimbRequest && selectResponse) {
-      await dispatch(updateOneClimbRequestAsync({
+      const reqResponse = await dispatch(updateOneClimbRequestAsync({
         id: selectedClimbRequest.id,
         updateBody: {
           targetMessageResponse: textResponse,
@@ -55,6 +56,13 @@ const BrowseRequests: React.FC<Props> = () => {
         }
       }));
       dispatch(getAllClimbRequestsAsync());
+      if (reqResponse.payload.targetAccepted) {
+        await dispatch(createClimbMeetupAsync({
+          climbRequestId: selectedClimbRequest.id,
+          userIds: [selectedClimbRequest.initiatingUser.id, selectedClimbRequest.targetUser.id],
+        }));
+        dispatch(getAllClimbMeetupsAsync());
+      }
       closeMatch();
     }
   };

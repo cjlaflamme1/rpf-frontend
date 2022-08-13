@@ -4,6 +4,7 @@ import {
 import authSlice from './authSlice';
 import climbAvailabilityGenSlice from './climbAvailabilityGenSlice';
 import climbAvailabilityScheduledSlice from './climbAvailabilityScheduledSlice';
+import climbMeetupSlice from './climbMeetupSlice';
 import climbRequestSlice from './climbRequestSlice';
 import userSlice from './userSlice';
 
@@ -13,6 +14,7 @@ const reducer = combineReducers({
   climbAvailabilityGenState: climbAvailabilityGenSlice,
   climbAvailabilityScheduledState: climbAvailabilityScheduledSlice,
   climbRequestState: climbRequestSlice,
+  climbMeetupState: climbMeetupSlice,
 });
 
 export const store = configureStore({

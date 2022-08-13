@@ -3,6 +3,7 @@ import { ScrollView, View, StyleSheet, ActivityIndicator } from 'react-native';
 import { Badge, Button, Switch, Text } from 'react-native-elements';
 import { Image } from 'react-native-elements';
 import { getAllclimbAvailabilityScheduledAsync } from '../../store/climbAvailabilityScheduledSlice';
+import { getAllClimbMeetupsAsync } from '../../store/climbMeetupSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { updateCurrentUserAsync } from '../../store/userSlice';
 
@@ -20,6 +21,7 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
   useEffect(() => {
     if (currentState.userState.currentUser) {
       dispatch(getAllclimbAvailabilityScheduledAsync());
+      dispatch(getAllClimbMeetupsAsync());
     }
   }, []);
 
