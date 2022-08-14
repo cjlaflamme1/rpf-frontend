@@ -5,15 +5,18 @@ import Toast from 'react-native-root-toast';
 import { dateOnly, timeOnly } from '../../helpers/timeAndDate';
 import { ClimbAvailabilityGen } from '../../store/climbAvailabilityGenSlice';
 import { ClimbAvailabilityScheduled, getAllclimbAvailabilityScheduledAsync, getOneClimbAvailScheduledAsync } from '../../store/climbAvailabilityScheduledSlice';
+import { getOneClimbMeetupAsync } from '../../store/climbMeetupSlice';
 import { createClimbRequestAsync } from '../../store/climbRequestSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { User } from '../../store/userSlice';
 import ClimbingProfile from '../user/ClimbingProfile';
 import PersonalProfile from '../user/PersonalProfile';
 
-interface Props { };
+interface Props {
+  navigation: any;
+};
 
-const ViewMatches: React.FC<Props> = () => {
+const ViewMatches: React.FC<Props> = ({ navigation }) => {
   const [showToast, setShowToast] = useState(false);
   const [visible, setVisible] = useState(false);
   const [climbingOverlay, setClimbingOverlay] = useState(false);
@@ -84,6 +87,165 @@ const ViewMatches: React.FC<Props> = () => {
   };
   const { matches, genMatches } = selectedScheduledAvailability;
 
+  const viewMeetupPress = () => {
+    navigation.navigate('Meetups');
+  }
+
+  const returnMatchButtonSched = (match: ClimbAvailabilityScheduled) => {
+    if (
+      match
+      && match.incomingClimbRequests
+      && match.incomingClimbRequests.length > 0
+    ) {
+      const presentRequest = match.incomingClimbRequests.find((req) => req.initiatingEntry.id === selectedScheduledAvailability.id);
+      if (presentRequest) {
+        if (presentRequest.climbMeetup) {
+          return (
+            <>
+              {
+                presentRequest.targetMessageResponse
+                && (
+                  <Text>
+                    {presentRequest.targetMessageResponse}
+                  </Text>
+                )
+              }
+              <Button
+                disabled
+                containerStyle={[styles.cardButton]}
+                title={"Request Accepted"}
+                />
+              <Button
+                containerStyle={[styles.cardButton]}
+                title={"View Meetup"}
+                onPress={() => viewMeetupPress()}
+                />
+            </>
+          );
+        }
+        if (presentRequest.targetAccepted === false) {
+          return (
+            <>
+              {
+                presentRequest.targetMessageResponse
+                && (
+                  <Text>
+                    {presentRequest.targetMessageResponse}
+                  </Text>
+                )
+              }
+              <Button
+                disabled
+                containerStyle={[styles.cardButton]}
+                title={"Request Denied"}
+                />
+            </>
+          )
+        }
+        return (
+          <Button
+            disabled
+            containerStyle={[styles.cardButton]}
+            title={"Request Submitted"}
+          />
+        )
+      }
+    }
+    if (
+      match
+      && match.climbRequests
+      && match.climbRequests.length > 0
+    ) {
+      const otherUserRequested = match.climbRequests.find((req) => req.initiatingEntry && req.initiatingEntry.id === match.id);
+      if (otherUserRequested) {
+        return (
+          <Button
+            disabled
+            containerStyle={[styles.cardButton]}
+            title={"Other User Submitted Request"}
+          />
+        )
+      }
+    }
+    return (
+      <Button
+        containerStyle={[styles.cardButton]}
+        title={"Submit Request"}
+        onPress={() => submitSchedMatchRequest(match)}
+      />
+    );
+  };
+
+  const returnMatchButtonGen = (match: ClimbAvailabilityGen) => {
+    if (
+      match
+      && match.incomingClimbRequests
+      && match.incomingClimbRequests.length > 0
+    ) {
+      const presentRequest = match.incomingClimbRequests.find((req) => req.initiatingEntry.id === selectedScheduledAvailability.id);
+      if (presentRequest) {
+        if (presentRequest.climbMeetup) {
+          return (
+            <>
+              {
+                presentRequest.targetMessageResponse
+                && (
+                  <Text>
+                    {presentRequest.targetMessageResponse}
+                  </Text>
+                )
+              }
+              <Button
+                disabled
+                containerStyle={[styles.cardButton]}
+                title={"Request Accepted"}
+                />
+              <Button
+                containerStyle={[styles.cardButton]}
+                title={"View Meetup"}
+                onPress={() => viewMeetupPress()}
+                />
+            </>
+          );
+        }
+        if (presentRequest.targetAccepted === false) {
+          return (
+            <>
+              {
+                presentRequest.targetMessageResponse
+                && (
+                  <Text>
+                    {presentRequest.targetMessageResponse}
+                  </Text>
+                )
+              }
+              <Button
+                disabled
+                containerStyle={[styles.cardButton]}
+                title={"Request Denied"}
+                />
+            </>
+          )
+        }
+        return (
+          <Button
+            disabled
+            containerStyle={[styles.cardButton]}
+            title={"Request Submitted"}
+            onPress={() => submitGenMatchRequest(match)}
+          />
+        )
+      }
+    }
+    return (
+      <Button
+        containerStyle={[styles.cardButton]}
+        title={"Submit Request"}
+        onPress={() => submitGenMatchRequest(match)}
+      />
+    );
+  };
+
   return (
     <View style={[styles.pageContainer]}>
       <Toast visible={showToast} onShow={() => setTimeout(() => setShowToast(false), 3000)}>
@@ -139,26 +301,9 @@ const ViewMatches: React.FC<Props> = () => {
                     </View>
                   </View>
                   <View style={[styles.sectionContainer]}>
-                    <Button
-                      disabled={
-                        (match
-                        && match.incomingClimbRequests
-                        && match.incomingClimbRequests.length > 0
-                        && match.incomingClimbRequests.find((req) => req.initiatingEntry.id === selectedScheduledAvailability.id))
-                          ? true
-                          : false
-                      }
-                      containerStyle={[styles.cardButton]}
-                      title={
-                        (match
-                          && match.incomingClimbRequests
-                          && match.incomingClimbRequests.length > 0
-                          && match.incomingClimbRequests.find((req) => req.initiatingEntry.id === selectedScheduledAvailability.id))
-                            ? 'Request submitted'
-                            : 'Submit request'
-                      }
-                      onPress={() => submitSchedMatchRequest(match)}
-                    />
+                    {
+                      returnMatchButtonSched(match)
+                    }
                   </View>
                 </Card>
               ))
@@ -213,7 +358,10 @@ const ViewMatches: React.FC<Props> = () => {
                     </View>
                   </View>
                   <View style={[styles.sectionContainer]}>
-                    <Button
+                    {
+                      returnMatchButtonGen(match)
+                    }
+                    {/* <Button
                       disabled={
                         (match
                         && match.incomingClimbRequests
@@ -232,7 +380,7 @@ const ViewMatches: React.FC<Props> = () => {
                             : 'Submit request'
                       }
                       onPress={() => submitGenMatchRequest(match)}
-                    />
+                    /> */}
                   </View>
                 </Card>
               ))

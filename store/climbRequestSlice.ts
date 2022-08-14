@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { createClimbRequest, getAllClimbRequests, getOneClimbRequest, updateOneClimbRequest } from '../api/climbRequestAPI';
 import { ClimbAvailabilityGen } from './climbAvailabilityGenSlice';
 import { ClimbAvailabilityScheduled } from './climbAvailabilityScheduledSlice';
+import { ClimbMeetup } from './climbMeetupSlice';
 import { User } from './userSlice';
 
 export interface CreateClimbRequestDTO {
@@ -24,6 +25,7 @@ export interface ClimbRequest {
   messages: any[] | null;
   targetUser: User;
   createdAt: Date;
+  climbMeetup?: ClimbMeetup;
 }
 
 interface ClimbRequestState {

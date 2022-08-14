@@ -234,8 +234,10 @@ const ScheduleRequest: React.FC<Props> = ({ navigation }) => {
                       </View>
                       <View style={[styles.cardButtons]}>
                         {
-                          availability.matches
-                          && availability.matches.length > 0
+                          ((availability.matches
+                          && availability.matches.length > 0)
+                          || (availability.genMatches
+                            && availability.genMatches.length > 0))
                           && (
                             <FontAwesome5
                               style={[styles.cardIcon]}

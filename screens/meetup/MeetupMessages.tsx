@@ -82,9 +82,9 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
               .map((message, index) => {
                 if (message.user.id === currentUser.id) {
                   return (
-                    <View style={[styles.singleMessageContainer]}>
+                    <View style={[styles.singleMessageContainer]} key={`climb-message-${index}`}>
                       <View style={[styles.emptyContainer]} />
-                      <View style={[styles.currentUserMessage]} key={`climb-message-${index}`}>
+                      <View style={[styles.currentUserMessage]}>
                         <Text>
                           {message.message}
                         </Text>
@@ -93,8 +93,8 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
                   );
                 }
                 return (
-                  <View style={[styles.singleMessageContainer]}>
-                    <View style={[styles.otherUserMessage]} key={`climb-message-${index}`}>
+                  <View style={[styles.singleMessageContainer]} key={`climb-message-${index}`}>
+                    <View style={[styles.otherUserMessage]}>
                       <Text>
                         {message.message}
                       </Text>
