@@ -76,6 +76,8 @@ const BrowseRequests: React.FC<Props> = () => {
         <View style={[styles.sectionContainer]}>
           {
             allClimbRequests
+            && allClimbRequests.length > 0
+            && allClimbRequests
             .slice()
             .sort((a, b) => a.createdAt.valueOf() < b.createdAt.valueOf() ? -1 : 1)
             .map((request, index) => (
