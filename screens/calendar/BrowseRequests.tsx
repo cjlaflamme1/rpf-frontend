@@ -60,6 +60,7 @@ const BrowseRequests: React.FC<Props> = () => {
         await dispatch(createClimbMeetupAsync({
           climbRequestId: selectedClimbRequest.id,
           userIds: [selectedClimbRequest.initiatingUser.id, selectedClimbRequest.targetUser.id],
+          climbDate: selectedClimbRequest.initiatingEntry.startDateTime,
         }));
         dispatch(getAllClimbMeetupsAsync());
       }

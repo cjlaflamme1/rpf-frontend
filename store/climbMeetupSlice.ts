@@ -11,6 +11,7 @@ export interface CreateClimbMessageDTO {
 export interface CreateClimbMeetupDTO {
   climbRequestId: string;
   userIds: string[];
+  climbDate: Date;
 }
 
 export interface ClimbMessage {
@@ -27,6 +28,7 @@ export interface ClimbMeetup {
   climbRequest: ClimbRequest;
   messages: ClimbMessage[] | null;
   users: User[];
+  climbDate: Date;
   createdAt: Date;
 }
 
