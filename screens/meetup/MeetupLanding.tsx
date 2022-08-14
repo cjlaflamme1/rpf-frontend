@@ -1,16 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import { Button, Card, Text } from 'react-native-elements';
+import { Button, Card, Overlay, Text } from 'react-native-elements';
+import { getOtherUser } from '../../api/userAPI';
 import { dateOnly } from '../../helpers/timeAndDate';
-import { getOneClimbMeetupAsync } from '../../store/climbMeetupSlice';
+import { getAllClimbMeetupsAsync, getOneClimbMeetupAsync } from '../../store/climbMeetupSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { User } from '../../store/userSlice';
+import ClimbingProfile from '../user/ClimbingProfile';
+import PersonalProfile from '../user/PersonalProfile';
 
 interface Props {
   navigation: any;
 };
 
 const MeetupLanding: React.FC<Props> = ({ navigation }) => {
+  const [visible, setVisible] = useState(false);
+  const [climbingOverlay, setClimbingOverlay] = useState(false);
+  const [otherUserProfile, setOtherUserProfile] = useState<User>();
   const currentState = useAppSelector((state) => ({
     climbMeetupState: state.climbMeetupState,
     userState: state.userState,
@@ -20,9 +27,36 @@ const MeetupLanding: React.FC<Props> = ({ navigation }) => {
   const { allClimbMeetups } = currentState.climbMeetupState;
   const { currentUser } = currentState.userState;
 
+  useEffect(() => {
+    dispatch(getAllClimbMeetupsAsync());
+  }, []);
+
   const viewMeetupMessages = async (meetupId: string, userName: string) => {
     await dispatch(getOneClimbMeetupAsync(meetupId));
     navigation.navigate('Meetup Messages', { name: userName })
+  }
+
+  const openProfile = async (userProfileId: string) => {
+    const res = await getOtherUser(userProfileId).catch((e) => console.log(e));
+    if (res && res.data) {
+      setOtherUserProfile(res.data);
+    }
+    setVisible(true);
+  };
+
+  const closeProfile = () => {
+    setOtherUserProfile(undefined);
+    setVisible(false);
+  }
+
+  const openClimbingProfile = (userProfile: User) => {
+    setOtherUserProfile(userProfile);
+    setClimbingOverlay(true);
+  }
+
+  const closeClimbingProfile = () => {
+    setOtherUserProfile(undefined);
+    setClimbingOverlay(false);
   }
 
   if (!currentUser) {
@@ -38,7 +72,7 @@ const MeetupLanding: React.FC<Props> = ({ navigation }) => {
             && allClimbMeetups.map((meetup, index) => (
               <Card containerStyle={[styles.cardContainer]} key={`${meetup.id}-${index}`}>
                     <Card.Title>
-                      { meetup.climbRequest?.initiatingEntry?.startDateTime && dateOnly(meetup.climbRequest?.initiatingEntry?.startDateTime)}
+                      {meetup.climbDate && dateOnly(meetup.climbDate)}
                     </Card.Title>
                     <Card.Divider />
                     <View>
@@ -55,6 +89,12 @@ const MeetupLanding: React.FC<Props> = ({ navigation }) => {
                             `${meetup.users.find((user) => user.id !== currentUser.id)?.firstName}'s Personal Profile`
                           )
                         }
+                        onPress={() => {
+                          const otherUser = meetup.users.find((user) => user.id !== currentUser.id);
+                          if (otherUser) {
+                            openProfile(otherUser.id);
+                          }
+                        }}
                       />
                     </View>
                     <View style={[styles.sectionContainer]}>
@@ -66,6 +106,12 @@ const MeetupLanding: React.FC<Props> = ({ navigation }) => {
                             `${meetup.users.find((user) => user.id !== currentUser.id)?.firstName}'s Climbing Profile`
                           )
                         }
+                        onPress={() => {
+                          const otherUser = meetup.users.find((user) => user.id !== currentUser.id);
+                          if (otherUser) {
+                            openClimbingProfile(otherUser);
+                          }
+                        }}
                       />
                     </View>
                     <View style={[styles.sectionContainer]}>
@@ -79,26 +125,24 @@ const MeetupLanding: React.FC<Props> = ({ navigation }) => {
             ))
           }
         </View>
-        {/* <Calendar
-          style={[styles.calendar]}
-        /> */}
-        {/* <View style={[styles.buttonContainer]}>
-          <Button
-            title="General Availability"
-            buttonStyle={[styles.buttonStyle]}
-            onPress={() => navigation.navigate('General Availability')}
-          />
-          <Button
-            title="Schedule Request"
-            buttonStyle={[styles.buttonStyle]}
-            onPress={() => navigation.navigate('Schedule Request')}
-          />
-          <Button
-            title="Browse Requests"
-            buttonStyle={[styles.buttonStyle]}
-            onPress={() => navigation.navigate('Browse Requests')}
-          />
-        </View> */}
+        <View>
+          <Overlay
+            onBackdropPress={closeProfile}
+            isVisible={visible}
+            overlayStyle={[styles.modalContainer]}
+          >
+            <PersonalProfile otherUser={otherUserProfile} />
+          </Overlay>
+        </View>
+        <View>
+          <Overlay
+            onBackdropPress={closeClimbingProfile}
+            isVisible={climbingOverlay}
+            overlayStyle={[styles.modalContainer]}
+          >
+            <ClimbingProfile otherUser={otherUserProfile} />
+          </Overlay>
+        </View>
       </ScrollView>
     </View>
   )

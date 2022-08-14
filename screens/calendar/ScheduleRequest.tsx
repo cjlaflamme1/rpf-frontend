@@ -131,7 +131,6 @@ const ScheduleRequest: React.FC<Props> = ({ navigation }) => {
   }
 
   const viewMatches = async (scheduleId: string) => {
-    console.log(scheduleId);
     await dispatch(getOneClimbAvailScheduledAsync(scheduleId));
     navigation.navigate('View Matches');
   }

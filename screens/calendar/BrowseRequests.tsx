@@ -116,7 +116,11 @@ const BrowseRequests: React.FC<Props> = () => {
                         Areas:
                       </Text>
                       {
-                        request.initiatingEntry.areas.map((area, index) => (
+                        request
+                        && request.initiatingEntry
+                        && request.initiatingEntry.areas
+                        && request.initiatingEntry.areas.length > 0
+                        && request.initiatingEntry.areas.map((area, index) => (
                           <Text style={[styles.areaItem]} key={`${area}-${index}`}>{area}</Text>
                         ))
                       }
@@ -170,7 +174,9 @@ const BrowseRequests: React.FC<Props> = () => {
                             Areas:
                           </Text>
                           {
-                            request.targetScheduledRequest.areas.map((area, index) => (
+                            request.targetScheduledRequest.areas
+                            && request.targetScheduledRequest.areas.length > 0
+                            && request.targetScheduledRequest.areas.map((area, index) => (
                               <Text style={[styles.areaItem]} key={`${area}-${index}-sched`}>{area}</Text>
                             ))
                           }

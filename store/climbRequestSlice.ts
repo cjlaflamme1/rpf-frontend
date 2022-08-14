@@ -47,6 +47,24 @@ const createClimbRequestAsync = createAsyncThunk(
   async (arg: CreateClimbRequestDTO, { rejectWithValue }) => {
     try {
       const response: any = await createClimbRequest(arg);
+      if (
+        response.data.initiatingEntry &&
+        response.data.initiatingEntry.areas
+      ) {
+        response.data.initiatingEntry.areas = JSON.parse(response.data.initiatingEntry.areas);
+      }
+      if (
+        response.data.targetScheduledRequest &&
+        response.data.targetScheduledRequest.areas
+      ) {
+        response.data.targetScheduledRequest.areas = JSON.parse(response.data.targetScheduledRequest.areas);
+      }
+      if (
+        response.data.targetGenRequest &&
+        response.data.targetGenRequest.areas
+      ) {
+        response.data.targetGenRequest.areas = JSON.parse(response.data.targetGenRequest.areas);
+      }
       return response.data;
     } catch (err: any) {
       return rejectWithValue({

@@ -32,3 +32,19 @@ export function updateCurrentUser(id: string, updateBody: Partial<User>) {
     }
   })
 }
+
+export function getOtherUser(id: string) {
+  return new Promise<AxiosPromise>((resolve, reject) => {
+    try {
+      api.get(`/user/${id}`)
+        .then((response: any) => {
+          resolve(response);
+        })
+        .catch((e: Error) => {
+          reject(e);
+        })
+    } catch (e) {
+      reject(e);
+    }
+  })
+}

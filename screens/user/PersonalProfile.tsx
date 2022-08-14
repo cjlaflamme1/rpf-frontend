@@ -6,7 +6,7 @@ import {Buffer} from "buffer";
 import * as ImagePicker from 'expo-image-picker';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getCurrentUserAsync, updateCurrentUserAsync, User } from '../../store/userSlice';
-import { postPresignedUrl, putImageOnS3 } from '../../api/s3API';
+import { postPresignedUrl, putImageOnS3, getPresignedUrl } from '../../api/s3API';
 
 interface Props {
   otherUser?: User | null;
@@ -64,7 +64,6 @@ const PersonalProfile: React.FC<Props> = ({ otherUser }) => {
       }
     };
   };
-
   
   if (currentUser && !otherUser) {
     return (

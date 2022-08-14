@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ScrollView, View, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
 import { Button, Card, Overlay, Text } from 'react-native-elements';
 import Toast from 'react-native-root-toast';
+import { getOtherUser } from '../../api/userAPI';
 import { dateOnly, timeOnly } from '../../helpers/timeAndDate';
 import { ClimbAvailabilityGen } from '../../store/climbAvailabilityGenSlice';
 import { ClimbAvailabilityScheduled, getAllclimbAvailabilityScheduledAsync, getOneClimbAvailScheduledAsync } from '../../store/climbAvailabilityScheduledSlice';
@@ -44,8 +45,11 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
     );
   }
 
-  const openProfile = (userProfile: User) => {
-    setOtherUserProfile(userProfile);
+  const openProfile = async (userProfileId: string) => {
+    const res = await getOtherUser(userProfileId).catch((e) => console.log(e));
+    if (res && res.data) {
+      setOtherUserProfile(res.data);
+    }
     setVisible(true);
   };
 
@@ -292,7 +296,7 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
                     <View>
                       <Text style={[styles.cardSection]}>Icon</Text>
                       <Text style={[styles.cardSection]}>{`${match.initialUser.firstName} ${match.initialUser.lastName}`}</Text>
-                      <Pressable onPress={() => openProfile(match.initialUser)}>
+                      <Pressable onPress={() => openProfile(match.initialUser.id)}>
                         <Text style={[styles.cardSection]}>Link to Profile info</Text>
                       </Pressable>
                       <Pressable onPress={() => openClimbingProfile(match.initialUser)}>
