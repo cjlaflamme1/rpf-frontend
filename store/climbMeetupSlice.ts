@@ -6,7 +6,6 @@ import { User } from './userSlice';
 export interface CreateClimbMessageDTO {
   message: string;
   climbMeetupId: string;
-  userId: string;
 }
 
 export interface CreateClimbMeetupDTO {
@@ -26,7 +25,7 @@ export interface ClimbMessage {
 export interface ClimbMeetup {
   id: string;
   climbRequest: ClimbRequest;
-  messages: any[] | null;
+  messages: ClimbMessage[] | null;
   users: User[];
   createdAt: Date;
 }

@@ -222,7 +222,10 @@ const BrowseRequests: React.FC<Props> = () => {
                                 Areas:
                               </Text>
                               {
-                                selectedClimbRequest.initiatingEntry.areas.map((area, index) => (
+                                selectedClimbRequest.initiatingEntry
+                                && selectedClimbRequest.initiatingEntry.areas
+                                && selectedClimbRequest.initiatingEntry.areas.length > 0
+                                && selectedClimbRequest.initiatingEntry.areas.map((area, index) => (
                                   <Text style={[styles.areaItem]} key={`${area}-${index}`}>{area}</Text>
                                 ))
                               }
@@ -276,7 +279,10 @@ const BrowseRequests: React.FC<Props> = () => {
                                     Areas:
                                   </Text>
                                   {
-                                    selectedClimbRequest.targetScheduledRequest.areas.map((area, index) => (
+                                    selectedClimbRequest.targetScheduledRequest
+                                    && selectedClimbRequest.targetScheduledRequest.areas
+                                    && selectedClimbRequest.targetScheduledRequest.areas.length > 0
+                                    && selectedClimbRequest.targetScheduledRequest.areas.map((area, index) => (
                                       <Text style={[styles.areaItem]} key={`${area}-${index}-sched`}>{area}</Text>
                                     ))
                                   }
