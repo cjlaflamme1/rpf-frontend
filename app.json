@@ -34,6 +34,8 @@
       "backgroundColor": "#9DBDC6"
     },
     "android": {
+      "package": "com.nhclimbingpartners",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/rpf_icon.png",
         "backgroundColor": "#9DBDC6"
