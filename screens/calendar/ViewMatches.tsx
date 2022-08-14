@@ -294,13 +294,12 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
                       </View>
                     </View>
                     <View>
-                      <Text style={[styles.cardSection]}>Icon</Text>
                       <Text style={[styles.cardSection]}>{`${match.initialUser.firstName} ${match.initialUser.lastName}`}</Text>
                       <Pressable onPress={() => openProfile(match.initialUser.id)}>
-                        <Text style={[styles.cardSection]}>Link to Profile info</Text>
+                        <Text style={[styles.cardSection, { marginTop: 10 }]}>Link to Profile info</Text>
                       </Pressable>
                       <Pressable onPress={() => openClimbingProfile(match.initialUser)}>
-                        <Text style={[styles.cardSection]}>Link to Climbing info</Text>
+                        <Text style={[styles.cardSection, { marginTop: 10 }]}>Link to Climbing info</Text>
                       </Pressable>
                     </View>
                   </View>
