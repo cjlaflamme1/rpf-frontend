@@ -45,7 +45,6 @@ export function putImageOnS3(preAuthURL: any, image: File | Buffer, fileType: st
         }
       })
         .then((response: any) => {
-          console.log(response);
           resolve(response);
         })
         .catch((e: Error) => {

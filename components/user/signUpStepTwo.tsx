@@ -22,13 +22,6 @@ const SignUpStepTwo: React.FC<Props> = ({ signupModel, photo }) => {
   const { signupObject, setSignupObject } = signupModel;
   const [image, setImage] = useState<{ localUri: string }>();
 
-  const fetchImageFromUri = async (uri: string) => {
-    const response = await fetch(uri);
-    console.log(response);
-    const blob = await response.blob();
-    console.log(blob);
-    return blob;
-  };
   
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library

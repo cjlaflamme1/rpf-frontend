@@ -53,7 +53,6 @@ const PersonalProfile: React.FC<Props> = ({ otherUser }) => {
       });
       const buff = Buffer.from(base64, "base64");
       const preAuthPostUrl = await postPresignedUrl({ fileName: imageFileName, fileType: `${result.type}/${imageExt}`}).then((response) => response).catch((e) => {
-        console.log(e);
         return e;
       });
       if (preAuthPostUrl.status === 201 && preAuthPostUrl.data) {

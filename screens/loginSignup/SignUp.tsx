@@ -73,7 +73,6 @@ const SignUp: React.FC<Props> = () => {
         await dispatch(signUpAsync(signupObject));
         if (photo) {
           const preAuthPostUrl = await postPresignedUrl({ fileName: signupObject.profilePhoto, fileType: photo.type}).then((response) => response).catch((e) => {
-            console.log(e);
             return e;
           });
           if (preAuthPostUrl.status === 201 && preAuthPostUrl.data) {
