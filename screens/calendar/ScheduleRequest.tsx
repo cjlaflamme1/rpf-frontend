@@ -9,7 +9,8 @@ import { ScheduledAvailabilityModel } from '../../models/ScheduledAvailability';
 import { createClimbAvailabilityScheduledAsync, deleteOneScheduledAvailAsync, getAllclimbAvailabilityScheduledAsync, getOneClimbAvailScheduledAsync, updateOneScheduledAvailAsync } from '../../store/climbAvailabilityScheduledSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { climbingAreas } from '../../assets/climbingVars/climbingAreas';
-import { timeOnly } from '../../helpers/timeAndDate';
+import { dateOnly, timeOnly } from '../../helpers/timeAndDate';
+import { Platform } from 'expo-modules-core';
 
 interface Props {
   navigation: any;
@@ -18,6 +19,7 @@ interface Props {
 const ScheduleRequest: React.FC<Props> = ({ navigation }) => {
   const [expanded, setExpanded] = useState('');
   const [visible, setVisible] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [editId, setEditId] = useState('');
   const [newDateStep, setNewDateStep] = useState(0);
   const dispatch = useAppDispatch();
@@ -291,18 +293,52 @@ const ScheduleRequest: React.FC<Props> = ({ navigation }) => {
                           Date
                         </Text>
                         <View style={[styles.dateContainer]}>
-                          <DateTimePicker
-                            testID="dateTimePicker"
-                            value={selectedDate ? new Date(selectedDate) : new Date()}
-                            minimumDate={new Date()}
-                            mode={'date'}
-                            is24Hour={true}
-                            onChange={(value) => {
-                              if (value.nativeEvent.timestamp) {
-                                setSelectedDate(new Date(value.nativeEvent.timestamp));
-                              }
-                            }}
-                          />
+                          {
+                            Platform.OS === 'android'
+                            && (
+                              <View>
+                                {
+                                  showDatePicker
+                                  && (
+                                    <DateTimePicker
+                                    testID="dateTimePicker"
+                                    value={selectedDate ? new Date(selectedDate) : new Date()}
+                                    minimumDate={new Date()}
+                                    mode={'date'}
+                                    is24Hour={true}
+                                    onChange={(value) => {
+                                      setShowDatePicker(!showDatePicker);
+                                      if (value.nativeEvent.timestamp) {
+                                        setSelectedDate(new Date(value.nativeEvent.timestamp));
+                                      }
+                                    }}
+                                  />
+                                  )
+                                }
+                                <Pressable onPress={() => setShowDatePicker(!showDatePicker)}>
+                                  <Text style={[{ textAlign: 'center' }]}>{selectedDate ? dateOnly(selectedDate) : ''}</Text>
+                                  <Text style={[{ textAlign: 'center' }]}>Select Date</Text>
+                                </Pressable>
+                              </View>
+                            )
+                          }
+                          {
+                            Platform.OS === 'ios'
+                            && (
+                              <DateTimePicker
+                                testID="dateTimePicker"
+                                value={selectedDate ? new Date(selectedDate) : new Date()}
+                                minimumDate={new Date()}
+                                mode={'date'}
+                                is24Hour={true}
+                                onChange={(value) => {
+                                  if (value.nativeEvent.timestamp) {
+                                    setSelectedDate(new Date(value.nativeEvent.timestamp));
+                                  }
+                                }}
+                              />
+                            )
+                          }
                         </View>
                       </View>
                     )
@@ -315,17 +351,49 @@ const ScheduleRequest: React.FC<Props> = ({ navigation }) => {
                           Start Time
                         </Text>
                         <View style={[styles.dateContainer]}>
-                          <DateTimePicker
-                            testID="timepick"
-                            value={selectedStartTime ? new Date(selectedStartTime) : new Date()}
-                            mode={'time'}
-                            is24Hour={true}
-                            onChange={(value) => {
-                              if (value.nativeEvent.timestamp) {
-                                setSelectedStartTime(new Date(value.nativeEvent.timestamp));
-                              }
-                            }}
-                          />
+                          {
+                            Platform.OS === 'android'
+                            && (
+                              <View>
+                                {
+                                  showDatePicker
+                                  && (
+                                    <DateTimePicker
+                                      testID="timepick"
+                                      value={selectedStartTime ? new Date(selectedStartTime) : new Date()}
+                                      mode={'time'}
+                                      onChange={(value) => {
+                                        setShowDatePicker(!showDatePicker);
+                                        if (value.nativeEvent.timestamp) {
+                                          setSelectedStartTime(new Date(value.nativeEvent.timestamp));
+                                        }
+                                      }}
+                                    />
+                                  )
+                                }
+                                <Pressable onPress={() => setShowDatePicker(!showDatePicker)}>
+                                  <Text style={[{ textAlign: 'center' }]}>{selectedStartTime ? timeOnly(selectedStartTime) : ''}</Text>
+                                  <Text style={[{ textAlign: 'center' }]}>Select Time</Text>
+                                </Pressable>
+                              </View>
+                            )
+                          }
+                          {
+                            Platform.OS === 'ios'
+                            && (
+                              <DateTimePicker
+                                testID="timepick"
+                                value={selectedStartTime ? new Date(selectedStartTime) : new Date()}
+                                mode={'time'}
+                                is24Hour={true}
+                                onChange={(value) => {
+                                  if (value.nativeEvent.timestamp) {
+                                    setSelectedStartTime(new Date(value.nativeEvent.timestamp));
+                                  }
+                                }}
+                              />
+                            )
+                          }
                         </View>
                       </View>
                     )
@@ -338,17 +406,49 @@ const ScheduleRequest: React.FC<Props> = ({ navigation }) => {
                           End Time
                         </Text>
                         <View style={[styles.dateContainer]}>
-                          <DateTimePicker
-                            testID="endtimepick"
-                            value={selectedEndTime ? new Date(selectedEndTime) : new Date()}
-                            mode={'time'}
-                            is24Hour={true}
-                            onChange={(value) => {
-                              if (value.nativeEvent.timestamp) {
-                                setSelectedEndTime(new Date(value.nativeEvent.timestamp));
-                              }
-                            }}
-                          />
+                          {
+                            Platform.OS === 'android'
+                            && (
+                              <View>
+                                {
+                                  showDatePicker
+                                  && (
+                                    <DateTimePicker
+                                      testID="endtimepick"
+                                      value={selectedEndTime ? new Date(selectedEndTime) : new Date()}
+                                      mode={'time'}
+                                      onChange={(value) => {
+                                        setShowDatePicker(!showDatePicker);
+                                        if (value.nativeEvent.timestamp) {
+                                          setSelectedEndTime(new Date(value.nativeEvent.timestamp));
+                                        }
+                                      }}
+                                    />
+                                  )
+                                }
+                                <Pressable onPress={() => setShowDatePicker(!showDatePicker)}>
+                                  <Text style={[{ textAlign: 'center' }]}>{selectedEndTime ? timeOnly(selectedEndTime) : ''}</Text>
+                                  <Text style={[{ textAlign: 'center' }]}>Select Time</Text>
+                                </Pressable>
+                              </View>
+                            )
+                          }
+                          {
+                            Platform.OS === 'ios'
+                            && (
+                              <DateTimePicker
+                                testID="endtimepick"
+                                value={selectedEndTime ? new Date(selectedEndTime) : new Date()}
+                                mode={'time'}
+                                is24Hour={true}
+                                onChange={(value) => {
+                                  if (value.nativeEvent.timestamp) {
+                                    setSelectedEndTime(new Date(value.nativeEvent.timestamp));
+                                  }
+                                }}
+                              />
+                            )
+                          }
                         </View>
                       </View>
                     )
