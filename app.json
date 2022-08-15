@@ -1,14 +1,26 @@
 {
   "expo": {
-    "name": "rpf-frontend",
-    "slug": "rpf-frontend",
+    "name": "NH Climbing Partners",
+    "plugins": [
+      [
+        "expo-camera"
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ],
+    "slug": "NH-Climbing-Partners",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/rpf_icon.png",
+    "backgroundColor": "#9DBDC6",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/rbt_logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#9DBDC6"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -17,13 +29,18 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.nhclimbingpartners",
+      "supportsTablet": false,
+      "backgroundColor": "#9DBDC6"
     },
     "android": {
+      "package": "com.nhclimbingpartners",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
+        "foregroundImage": "./assets/rpf_icon.png",
+        "backgroundColor": "#9DBDC6"
+      },
+      "backgroundColor": "#9DBDC6"
     },
     "web": {
       "favicon": "./assets/favicon.png"
