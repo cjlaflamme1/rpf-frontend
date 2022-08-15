@@ -22,13 +22,13 @@ const LoginSignup: React.FC<Props> = ({ navigation }) => {
   return (
     <View style={[styles.topContainer]}>
       <View style={[styles.centerContainer]}>
-        <Text h1>Rumney</Text>
-        <Text h1>Partner Finder</Text>
+        <Text h1>NH Climbing</Text>
+        <Text h1>Partners</Text>
       </View>
       <View style={[styles.centerContainer]}>
         <Image
           source={require(imageUri)}
-          style={{width: 150, height: 150}}
+          style={{width: 150, height: 150, maxHeight: 150, maxWidth: 150}}
           resizeMode={'center'}
         />
       </View>

@@ -16,6 +16,8 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
   const currentState = useAppSelector((state) => ({
     userState: state.userState,
     climbAvailabilityScheduledState: state.climbAvailabilityScheduledState,
+    climbMeetupState: state.climbMeetupState,
+    climbRequestState: state.climbRequestState,
   }));
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -42,6 +44,30 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
   const { currentUser } = currentState.userState;
   const { firstName, lastName } = currentState.userState.currentUser;
   const { allScheduledAvailability } = currentState.climbAvailabilityScheduledState;
+  const { allClimbMeetups } = currentState.climbMeetupState;
+  const { allClimbRequests } = currentState.climbRequestState;
+
+  const getUnreadMessages = () => {
+    let count = 0;
+    if (allClimbMeetups && allClimbMeetups.length > 0) {
+      console.log(allClimbMeetups.length);
+      allClimbMeetups.map((meetup) => {
+        if (meetup.messages && meetup.messages.length > 0) {
+          console.log(meetup.messages.length);
+          const relevantMessages = meetup.messages.filter((mess) => mess.user.id !== currentUser.id);
+          console.log(relevantMessages);
+          if (relevantMessages && relevantMessages.length > 0) {
+            relevantMessages.map((mess) => {
+              if (!mess.read) {
+                count++;
+              }
+            })
+          }
+        }
+      })
+    };
+    return count;
+  };
   return (
     <View>
       <ScrollView>
@@ -83,17 +109,17 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
             <Text style= {[styles.profileWidgetItem]}>Partner Finder Visibility</Text>
           </View>
           <View style={[styles.profileWidgetRow]}>
-            <Text style= {[styles.profileWidgetItem]}>Partners Found</Text>
+            <Text style= {[styles.profileWidgetItem]}>Unread Messages</Text>
             <Badge
               containerStyle={[styles.profileWidgetItem]}
-              value="0"
+              value={getUnreadMessages()}
               status="primary"
             />
           </View>
           <View style={[styles.profileWidgetRow]}>
             <Badge
               containerStyle={[styles.profileWidgetItem]}
-              value={(allScheduledAvailability || []).length}
+              value={(allClimbRequests?.filter((req) => req.targetAccepted === null) || []).length}
               status="primary"
             />
             <Text style= {[styles.profileWidgetItem]}>Requests Open</Text>
@@ -102,7 +128,7 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
             <Text style= {[styles.profileWidgetItem]}>Upcoming meetups</Text>
             <Badge
               containerStyle={[styles.profileWidgetItem]}
-              value="0"
+              value={(allClimbMeetups || []).length}
               status="primary"
             />
           </View>

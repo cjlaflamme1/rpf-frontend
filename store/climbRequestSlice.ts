@@ -36,7 +36,7 @@ interface ClimbRequestState {
 }
 
 const initialState: ClimbRequestState = {
-  allClimbRequests: null,
+  allClimbRequests: [],
   selectedClimbRequest: null,
   status: 'idle',
   error: null,
@@ -211,7 +211,7 @@ const climbRequestSlice = createSlice({
       })
       .addCase(getAllClimbRequestsAsync.rejected, (state, action) => {
         state.status = 'failed';
-        state.allClimbRequests = null;
+        state.allClimbRequests = [];
         state.error = action.payload;
       })
       .addCase(getOneClimbRequestAsync.pending, (state) => {

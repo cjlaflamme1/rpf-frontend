@@ -5,7 +5,7 @@ import { Button, Card, Input, Text } from 'react-native-elements';
 import { dateOnly } from '../../helpers/timeAndDate';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { createClimbMessageAsync, getOneClimbMeetupAsync } from '../../store/climbMeetupSlice';
+import { createClimbMessageAsync, getAllClimbMeetupsAsync, getOneClimbMeetupAsync, updateClimbMessageAsync } from '../../store/climbMeetupSlice';
 import { useIsFocused } from '@react-navigation/native';
 
 interface Props {
@@ -29,6 +29,15 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
     };
   }
 
+  const readMessage = async (messageId: string) => {
+    await dispatch(updateClimbMessageAsync({
+      id: messageId,
+      updateBody: {
+        read: true,
+      },
+    }));
+  };
+
   useEffect(() => {
     if (
       currentUser
@@ -39,6 +48,18 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
       const otherUser = selectedClimbMeetup.users.find((u) => u.id !== currentUser.id);
       if (otherUser) {
         navigation.setOptions({title: `${otherUser.firstName}`})
+      }
+    }
+    if (
+      currentUser
+      && selectedClimbMeetup
+      && selectedClimbMeetup.messages
+      && selectedClimbMeetup.messages.length > 0
+    ) {
+      const relevantMessages = selectedClimbMeetup.messages.filter((mess) => (mess.user.id !== currentUser.id) && !mess.read);
+      if (relevantMessages && relevantMessages.length > 0) {
+        relevantMessages.map((mess) => readMessage(mess.id));
+        dispatch(getAllClimbMeetupsAsync());
       }
     }
     const refreshMessages = setInterval(() => {
