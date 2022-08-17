@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Input, Text, CheckBox, ButtonGroup, Button, Icon } from 'react-native-elements';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Platform, Dimensions } from 'react-native';
+import { Text, CheckBox, ButtonGroup } from 'react-native-elements';
 import { Picker } from '@react-native-picker/picker';
 import { SignupObject } from '../../models/SignupObject';
 import { vScale, yds } from '../../assets/climbingVars/climbingGrades';
@@ -13,9 +13,19 @@ interface Props {
 };
 
 const SignUpStepThree: React.FC<Props> = ({ signupModel }) => {
+  const window = Dimensions.get('window');
+  const screen = Dimensions.get('screen');
+  const [dimensions, setDimensions] = useState({ window, screen });
   const { signupObject, setSignupObject } = signupModel;
   const [selectedBox, setSelectedBox] = useState('tr');
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', ({ window, screen }) => {
+      setDimensions({ window, screen });
+    });
+    return () => subscription?.remove();
+  }, [])
 
   const selectorValue = (attemptStyle: string) => {
     if (attemptStyle === 'warmup') {
@@ -148,67 +158,213 @@ const SignUpStepThree: React.FC<Props> = ({ signupModel }) => {
           containerStyle={{ marginBottom: 20 }}
         />
       </View>
-      <View style={[styles.dropdownContainer]}>
-        <Text style={[styles.dropdownLabel]}>Warm up pref</Text>
-        <Text style={[styles.dropdownLabel]}>Onsight</Text>
-        <Text style={[styles.dropdownLabel]}>Redpoint</Text>
-      </View>
-      <View style={styles.dropdownContainer}>
-        <Picker
-          style={styles.dropdownItem}
-          selectedValue={selectorValue('warmup')}
-          onValueChange={(itemValue: string) => setWarmup(itemValue)}
-        >
-          {
-            selectedBox !== 'boulder'
-            && yds.map((grade) => (
-              <Picker.Item label={grade} value={grade} />
-            ))
-          }
-          {
-            selectedBox === 'boulder'
-            && vScale.map((grade) => (
-              <Picker.Item label={grade} value={grade} />
-            ))
-          }
-        </Picker>
-        <Picker
-          style={styles.dropdownItem}
-          selectedValue={selectorValue('onsight')}
-          onValueChange={(itemValue: string) => setOnsight(itemValue)}
-        >
-          {
-            selectedBox !== 'boulder'
-            && yds.map((grade) => (
-              <Picker.Item label={grade} value={grade} />
-            ))
-          }
-          {
-            selectedBox === 'boulder'
-            && vScale.map((grade) => (
-              <Picker.Item label={grade} value={grade} />
-            ))
-          }
-        </Picker>
-        <Picker
-          style={styles.dropdownItem}
-          selectedValue={selectorValue('redpoint')}
-          onValueChange={(itemValue: string) => setRedpoint(itemValue)}
-        >
-          {
-            selectedBox !== 'boulder'
-            && yds.map((grade, index) => (
-              <Picker.Item key={`${selectedBox}-${grade}-${index}`} label={grade} value={grade} />
-            ))
-          }
-          {
-            selectedBox === 'boulder'
-            && vScale.map((grade, index) => (
-              <Picker.Item key={`${selectedBox}-${grade}-${index}`} label={grade} value={grade} />
-            ))
-          }
-        </Picker>
-      </View>
+      {
+        Platform.OS === 'android'
+          ? (
+            <>
+              {
+                dimensions.screen.width >= 425
+                  ? (
+                      <>
+                        <View style={[styles.dropdownContainer]}>
+                          <Text style={[styles.dropdownLabel]}>Warm up pref</Text>
+                          <Text style={[styles.dropdownLabel]}>Onsight</Text>
+                          <Text style={[styles.dropdownLabel]}>Redpoint</Text>
+                        </View>
+                        <View style={styles.dropdownContainer}>
+                          <Picker
+                            style={styles.dropdownItem}
+                            selectedValue={selectorValue('warmup')}
+                            onValueChange={(itemValue: string) => setWarmup(itemValue)}
+                          >
+                            {
+                              selectedBox !== 'boulder'
+                              && yds.map((grade) => (
+                                <Picker.Item label={grade} value={grade} />
+                              ))
+                            }
+                            {
+                              selectedBox === 'boulder'
+                              && vScale.map((grade) => (
+                                <Picker.Item label={grade} value={grade} />
+                              ))
+                            }
+                          </Picker>
+                          <Picker
+                            style={styles.dropdownItem}
+                            selectedValue={selectorValue('onsight')}
+                            onValueChange={(itemValue: string) => setOnsight(itemValue)}
+                          >
+                            {
+                              selectedBox !== 'boulder'
+                              && yds.map((grade) => (
+                                <Picker.Item label={grade} value={grade} />
+                              ))
+                            }
+                            {
+                              selectedBox === 'boulder'
+                              && vScale.map((grade) => (
+                                <Picker.Item label={grade} value={grade} />
+                              ))
+                            }
+                          </Picker>
+                          <Picker
+                            style={styles.dropdownItem}
+                            selectedValue={selectorValue('redpoint')}
+                            onValueChange={(itemValue: string) => setRedpoint(itemValue)}
+                          >
+                            {
+                              selectedBox !== 'boulder'
+                              && yds.map((grade, index) => (
+                                <Picker.Item key={`${selectedBox}-${grade}-${index}`} label={grade} value={grade} />
+                              ))
+                            }
+                            {
+                              selectedBox === 'boulder'
+                              && vScale.map((grade, index) => (
+                                <Picker.Item key={`${selectedBox}-${grade}-${index}`} label={grade} value={grade} />
+                              ))
+                            }
+                          </Picker>
+                        </View>
+                      </>
+                  ) : (
+                    <View style={[{width: '100%', justifyContent: 'center', flexDirection: 'column'}]}>
+                        <View style={[styles.dropdownContainer, styles.singleDropdownContainer]}>
+                          <Text style={[styles.singleDropdownLabel]}>Warm up pref</Text>
+                          <Picker
+                            // style={styles.dropdownItem}
+                            style={[styles.singleDropdownItem]}
+                            selectedValue={selectorValue('warmup')}
+                            onValueChange={(itemValue: string) => setWarmup(itemValue)}
+                          >
+                            {
+                              selectedBox !== 'boulder'
+                              && yds.map((grade) => (
+                                <Picker.Item label={grade} value={grade} />
+                              ))
+                            }
+                            {
+                              selectedBox === 'boulder'
+                              && vScale.map((grade) => (
+                                <Picker.Item label={grade} value={grade} />
+                              ))
+                            }
+                          </Picker>
+                        </View>
+                        <View style={[styles.dropdownContainer, styles.singleDropdownContainer]}>
+                          <Text style={[styles.singleDropdownLabel]}>Onsight</Text>
+                          <Picker
+                            style={styles.singleDropdownItem}
+                            selectedValue={selectorValue('onsight')}
+                            onValueChange={(itemValue: string) => setOnsight(itemValue)}
+                          >
+                            {
+                              selectedBox !== 'boulder'
+                              && yds.map((grade) => (
+                                <Picker.Item label={grade} value={grade} />
+                              ))
+                            }
+                            {
+                              selectedBox === 'boulder'
+                              && vScale.map((grade) => (
+                                <Picker.Item label={grade} value={grade} />
+                              ))
+                            }
+                          </Picker>
+                        </View>
+                        <View style={[styles.dropdownContainer, styles.singleDropdownContainer]}>
+                          <Text style={[styles.singleDropdownLabel]}>Redpoint</Text>
+                          <Picker
+                            style={styles.singleDropdownItem}
+                            selectedValue={selectorValue('redpoint')}
+                            onValueChange={(itemValue: string) => setRedpoint(itemValue)}
+                          >
+                            {
+                              selectedBox !== 'boulder'
+                              && yds.map((grade, index) => (
+                                <Picker.Item key={`${selectedBox}-${grade}-${index}`} label={grade} value={grade} />
+                              ))
+                            }
+                            {
+                              selectedBox === 'boulder'
+                              && vScale.map((grade, index) => (
+                                <Picker.Item key={`${selectedBox}-${grade}-${index}`} label={grade} value={grade} />
+                              ))
+                            }
+                          </Picker>
+                        </View>
+                      </View>
+                  )
+              }
+            </>
+            
+          ) : (
+            <>
+              <View style={[styles.dropdownContainer]}>
+                <Text style={[styles.dropdownLabel]}>Warm up pref</Text>
+                <Text style={[styles.dropdownLabel]}>Onsight</Text>
+                <Text style={[styles.dropdownLabel]}>Redpoint</Text>
+              </View>
+              <View style={styles.dropdownContainer}>
+                <Picker
+                  style={styles.dropdownItem}
+                  selectedValue={selectorValue('warmup')}
+                  onValueChange={(itemValue: string) => setWarmup(itemValue)}
+                >
+                  {
+                    selectedBox !== 'boulder'
+                    && yds.map((grade) => (
+                      <Picker.Item label={grade} value={grade} />
+                    ))
+                  }
+                  {
+                    selectedBox === 'boulder'
+                    && vScale.map((grade) => (
+                      <Picker.Item label={grade} value={grade} />
+                    ))
+                  }
+                </Picker>
+                <Picker
+                  style={styles.dropdownItem}
+                  selectedValue={selectorValue('onsight')}
+                  onValueChange={(itemValue: string) => setOnsight(itemValue)}
+                >
+                  {
+                    selectedBox !== 'boulder'
+                    && yds.map((grade) => (
+                      <Picker.Item label={grade} value={grade} />
+                    ))
+                  }
+                  {
+                    selectedBox === 'boulder'
+                    && vScale.map((grade) => (
+                      <Picker.Item label={grade} value={grade} />
+                    ))
+                  }
+                </Picker>
+                <Picker
+                  style={styles.dropdownItem}
+                  selectedValue={selectorValue('redpoint')}
+                  onValueChange={(itemValue: string) => setRedpoint(itemValue)}
+                >
+                  {
+                    selectedBox !== 'boulder'
+                    && yds.map((grade, index) => (
+                      <Picker.Item key={`${selectedBox}-${grade}-${index}`} label={grade} value={grade} />
+                    ))
+                  }
+                  {
+                    selectedBox === 'boulder'
+                    && vScale.map((grade, index) => (
+                      <Picker.Item key={`${selectedBox}-${grade}-${index}`} label={grade} value={grade} />
+                    ))
+                  }
+                </Picker>
+              </View>
+            </>
+          )
+      }
     </View>
   )
 };
@@ -228,6 +384,17 @@ const styles = StyleSheet.create({
   },
   dropdownItem: {
     width: '33%'
+  },
+  singleDropdownItem : {
+    justifyContent: 'center',
+    width: '50%',
+    alignSelf: 'center'
+  },
+  singleDropdownLabel: {
+    textAlign: 'center',
+  },
+  singleDropdownContainer: {
+    flexDirection: 'column',
   },
   dropdownLabel: {
     width: '33%',
