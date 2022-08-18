@@ -106,7 +106,7 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
                     <View style={[styles.singleMessageContainer]} key={`climb-message-${index}`}>
                       <View style={[styles.emptyContainer]} />
                       <View style={[styles.currentUserMessage]}>
-                        <Text>
+                        <Text style={[styles.messageText]}>
                           {message.message}
                         </Text>
                       </View>
@@ -116,7 +116,7 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
                 return (
                   <View style={[styles.singleMessageContainer]} key={`climb-message-${index}`}>
                     <View style={[styles.otherUserMessage]}>
-                      <Text>
+                      <Text style={[styles.messageText]}>
                         {message.message}
                       </Text>
                     </View>
@@ -128,7 +128,6 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
         </View>
         <View style={[styles.inputParentContainer]}>
           <Input
-            containerStyle={[styles.inputContainer]}
             placeholder="Comment"
             value={messageDraft}
             onChangeText={(value) => setMessageDraft(value)}
@@ -153,12 +152,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   scrollContainer: {
-    flex: 1,
     justifyContent: 'space-between',
-  },
-  inputContainer: {
-    // width: '100%',
-    // minWidth: '90%',
+    minHeight: '90%',
   },
   pageContainer: {
     marginTop: 10,
@@ -176,11 +171,22 @@ const styles = StyleSheet.create({
   },
   currentUserMessage: {
     justifyContent: 'flex-end',
-    maxWidth: '50%',
+    maxWidth: '60%',
+    backgroundColor: '#DAEAEF',
+    flexGrow: 1,
+    padding: 20,
+    borderRadius: 20,
   },
   otherUserMessage: {
     justifyContent: 'flex-start',
-    maxWidth: '50%',
+    maxWidth: '60%',
+    backgroundColor: '#9DBDC6',
+    flexGrow: 1,
+    padding: 20,
+    borderRadius: 20,
+  },
+  messageText: {
+    fontSize: 18,
   },
   modalContainer: {
     width: '90%',
