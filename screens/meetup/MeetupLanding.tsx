@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, StyleSheet, ScrollView, Pressable, RefreshControl } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { Button, Card, Overlay, Text } from 'react-native-elements';
 import { getOtherUser } from '../../api/userAPI';
@@ -16,6 +16,7 @@ interface Props {
 
 const MeetupLanding: React.FC<Props> = ({ navigation }) => {
   const [visible, setVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [climbingOverlay, setClimbingOverlay] = useState(false);
   const [otherUserProfile, setOtherUserProfile] = useState<User>();
   const currentState = useAppSelector((state) => ({
@@ -23,6 +24,9 @@ const MeetupLanding: React.FC<Props> = ({ navigation }) => {
     userState: state.userState,
   }));
   const dispatch = useAppDispatch();
+  const wait = (timeout: number) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  };
 
   const { allClimbMeetups } = currentState.climbMeetupState;
   const { currentUser } = currentState.userState;
@@ -59,12 +63,26 @@ const MeetupLanding: React.FC<Props> = ({ navigation }) => {
     setClimbingOverlay(false);
   }
 
+  const updatePageData = () => {
+    if (currentState.userState.currentUser) {
+      dispatch(getAllClimbMeetupsAsync());
+    }
+  }
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    updatePageData();
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
   if (!currentUser) {
     return (<View />)
   }
   return (
     <View style={[styles.pageContainer]}>
-      <ScrollView>
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
         <View style={[styles.sectionContainer]}>
           {
             allClimbMeetups

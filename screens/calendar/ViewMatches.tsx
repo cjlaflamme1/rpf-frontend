@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ScrollView, View, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { ScrollView, View, StyleSheet, ActivityIndicator, Pressable, RefreshControl } from 'react-native';
 import { Button, Card, Overlay, Text } from 'react-native-elements';
 import Toast from 'react-native-root-toast';
 import { getOtherUser } from '../../api/userAPI';
@@ -19,6 +19,7 @@ interface Props {
 
 const ViewMatches: React.FC<Props> = ({ navigation }) => {
   const [showToast, setShowToast] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [visible, setVisible] = useState(false);
   const [climbingOverlay, setClimbingOverlay] = useState(false);
   const [otherUserProfile, setOtherUserProfile] = useState<User>();
@@ -27,8 +28,23 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
   }));
   const dispatch = useAppDispatch();
 
+  const wait = (timeout: number) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  };
+
   const { selectedScheduledAvailability } = currentState.climbAvailabilityScheduledState;
 
+  const updatePageData = () => {
+    if (selectedScheduledAvailability) {
+      dispatch(getOneClimbAvailScheduledAsync(selectedScheduledAvailability.id));
+    }
+  }
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    updatePageData();
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
   
   if (
     (!selectedScheduledAvailability
@@ -39,10 +55,14 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
       || selectedScheduledAvailability.genMatches.length <= 0)
     ) {
       return (
-        <View>
-          <Text>No Matches Found</Text>
-        </View>
-    );
+        <ScrollView
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        >
+          <View style={[{ marginTop: 20 }]}>
+            <Text>No Matches Found</Text>
+          </View>
+        </ScrollView>
+      )
   }
 
   const openProfile = async (userProfileId: string) => {
@@ -255,7 +275,9 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
       <Toast visible={showToast} onShow={() => setTimeout(() => setShowToast(false), 3000)}>
         Match request submitted!
       </Toast>
-      <ScrollView>
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
         <View style={[styles.sectionContainer]}>
           <Text h3>{dateOnly(selectedScheduledAvailability.startDateTime)}</Text>
         </View>
