@@ -56,7 +56,11 @@ export default function App() {
   }
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token || ''));
+    registerForPushNotificationsAsync().then((token) => {
+      if (token) {
+        setExpoPushToken(token);
+      }
+    });
 
     // This listener is fired whenever a notification is received while the app is foregrounded
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
@@ -82,7 +86,7 @@ export default function App() {
       <SafeAreaView style={style.safeArea}>
         <Provider store={store}>
           <RootSiblingParent>
-            <RootNavigation />
+            <RootNavigation  expoPushToken={expoPushToken} />
           </RootSiblingParent>
         </Provider>
       </SafeAreaView>

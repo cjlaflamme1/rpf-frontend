@@ -5,12 +5,14 @@ import SignUp from '../screens/loginSignup/SignUp';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import TabNavigator from './TabNavigator';
 import SignIn from '../screens/loginSignup/SignIn';
-import { getCurrentUserAsync } from '../store/userSlice';
+import { getCurrentUserAsync, updateCurrentUserAsync } from '../store/userSlice';
 import { loginAction } from '../store/authSlice';
 
+interface Props {
+  expoPushToken: string;
+}
 
-
-const RootNavigation: React.FC = () => {
+const RootNavigation: React.FC<Props> = ({ expoPushToken }) => {
   const RootStack = createNativeStackNavigator();
   const currentState = useAppSelector((state) => ({
     authState: state.authState,
@@ -18,6 +20,7 @@ const RootNavigation: React.FC = () => {
   }));
   const dispatch = useAppDispatch();
   const { currentAuth } = currentState.authState;
+  const { currentUser } = currentState.userState;
 
   const checkUser = async () => {
     try {
@@ -37,6 +40,19 @@ const RootNavigation: React.FC = () => {
   useEffect(() => {
     checkUser();
   }, []);
+
+  useEffect(() => {
+    if (currentUser && expoPushToken) {
+      if (currentUser.expoPushToken !== expoPushToken) {
+        dispatch(updateCurrentUserAsync({
+          id: currentUser.id,
+          updateBody: {
+            expoPushToken,
+          },
+        }));
+      };
+    }
+  }, [expoPushToken, currentUser])
 
   return (
     <>
