@@ -1,20 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, TextInput } from 'react-native';
-import { Calendar } from 'react-native-calendars';
-import { Button, Card, Input, Text } from 'react-native-elements';
-import { dateOnly } from '../../helpers/timeAndDate';
+import { View, StyleSheet, ScrollView, Pressable, AppState } from 'react-native';
+import { Input, Text } from 'react-native-elements';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { createClimbMessageAsync, getAllClimbMeetupsAsync, getOneClimbMeetupAsync, updateClimbMessageAsync } from '../../store/climbMeetupSlice';
-import { useIsFocused } from '@react-navigation/native';
 
 interface Props {
   navigation: any;
 };
 
 const MeetupMessages: React.FC<Props> = ({ navigation }) => {
+  const appState = useRef(AppState.currentState);
   const [messageDraft, setMessageDraft] = useState('');
-  const scrollViewRef = useRef<ScrollView|null>(null);
+  const scrollViewRef = useRef<KeyboardAwareScrollView|null>(null);
   const currentState = useAppSelector((state) => ({
     climbMeetupState: state.climbMeetupState,
     userState: state.userState,
@@ -24,7 +23,7 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
   const { currentUser } = currentState.userState;
 
   const updateMessages = () => {
-    if (selectedClimbMeetup) {
+    if (selectedClimbMeetup && appState.current === 'active') {
       dispatch(getOneClimbMeetupAsync(selectedClimbMeetup.id));
     };
   }
@@ -38,7 +37,12 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
     }));
   };
 
+  const _handleAppStateChange = (nextAppState: any) => {
+    appState.current = nextAppState;
+  };
+
   useEffect(() => {
+    const subscription = AppState.addEventListener("change", _handleAppStateChange);
     if (
       currentUser
       && selectedClimbMeetup
@@ -63,10 +67,11 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
       }
     }
     const refreshMessages = setInterval(() => {
-      updateMessages();
+        updateMessages();
     }, 5000);
     return () => {
       clearInterval(refreshMessages);
+      subscription.remove();
     }
   }, []);
 
@@ -86,11 +91,13 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
   }
   return (
     <View style={[styles.pageContainer]}>
-      <ScrollView
+      <KeyboardAwareScrollView
         scrollsToTop={false}
         ref={scrollViewRef}
-        onLayout={() => scrollViewRef?.current?.scrollToEnd({ animated: true })}
-        onContentSizeChange={() => scrollViewRef?.current?.scrollToEnd({ animated: true })}
+        onLayout={() => scrollViewRef?.current?.scrollToEnd()}
+        onContentSizeChange={() => scrollViewRef?.current?.scrollToEnd()}
+        // style={[styles.scrollContainer]}
+        contentContainerStyle={[styles.scrollContainer]}
       >
         <View style={[styles.messagesParentContainer]}>
           {
@@ -106,7 +113,7 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
                     <View style={[styles.singleMessageContainer]} key={`climb-message-${index}`}>
                       <View style={[styles.emptyContainer]} />
                       <View style={[styles.currentUserMessage]}>
-                        <Text>
+                        <Text style={[styles.messageText]}>
                           {message.message}
                         </Text>
                       </View>
@@ -116,7 +123,7 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
                 return (
                   <View style={[styles.singleMessageContainer]} key={`climb-message-${index}`}>
                     <View style={[styles.otherUserMessage]}>
-                      <Text>
+                      <Text style={[styles.messageText]}>
                         {message.message}
                       </Text>
                     </View>
@@ -126,21 +133,20 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
               })
           }
         </View>
-      </ScrollView>
-      <View style={[styles.inputParentContainer]}>
-        <Input
-          containerStyle={[styles.inputContainer]}
-          placeholder="Comment"
-          value={messageDraft}
-          onChangeText={(value) => setMessageDraft(value)}
-          autoCompleteType={undefined}
-        />
-        <Pressable
-          onPress={submitMessage}
-        >
-          <MaterialCommunityIcons name="message" size={36} color="blue" />
-        </Pressable>
-      </View>
+        <View style={[styles.inputParentContainer]}>
+          <Input
+            placeholder="Comment"
+            value={messageDraft}
+            onChangeText={(value) => setMessageDraft(value)}
+            autoCompleteType={undefined}
+            />
+          <Pressable
+            onPress={submitMessage}
+            >
+            <MaterialCommunityIcons name="message" size={36} color="blue" />
+          </Pressable>
+        </View>
+      </KeyboardAwareScrollView>
     </View>
   )
 };
@@ -151,11 +157,10 @@ const styles = StyleSheet.create({
     minWidth: '90%',
     maxWidth: '90%',
     flexDirection: 'row',
-    justifyContent: 'center',
   },
-  inputContainer: {
-    // width: '100%',
-    // minWidth: '90%',
+  scrollContainer: {
+    justifyContent: 'space-between',
+    minHeight: '90%',
   },
   pageContainer: {
     marginTop: 10,
@@ -173,11 +178,22 @@ const styles = StyleSheet.create({
   },
   currentUserMessage: {
     justifyContent: 'flex-end',
-    maxWidth: '50%',
+    maxWidth: '60%',
+    backgroundColor: '#DAEAEF',
+    flexGrow: 1,
+    padding: 20,
+    borderRadius: 20,
   },
   otherUserMessage: {
     justifyContent: 'flex-start',
-    maxWidth: '50%',
+    maxWidth: '60%',
+    backgroundColor: '#9DBDC6',
+    flexGrow: 1,
+    padding: 20,
+    borderRadius: 20,
+  },
+  messageText: {
+    fontSize: 18,
   },
   modalContainer: {
     width: '90%',

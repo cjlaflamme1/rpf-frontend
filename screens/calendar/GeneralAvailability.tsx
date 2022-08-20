@@ -184,7 +184,7 @@ const GeneralAvailability: React.FC<Props> = () => {
                     <View style={[styles.accordionCard]}>
                       <View>
                         <Text>
-                          {`${availability.startHour}:${availability.startMinute} ${availability.startAMPM} – ${availability.finishHour}:${availability.startMinute} ${availability.finishAMPM}`}
+                          {`${availability.startHour}:${availability.startMinute !== 0 ? availability.startMinute : availability.startMinute.toString() + '0'} ${availability.startAMPM} – ${availability.finishHour}:${availability.finishMinute !== 0 ? availability.finishMinute : availability.finishMinute.toString() + '0'} ${availability.finishAMPM}`}
                         </Text>
                         <View>
                           {

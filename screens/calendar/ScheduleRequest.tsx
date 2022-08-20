@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, StyleSheet, ScrollView, Pressable, RefreshControl } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -18,6 +18,7 @@ interface Props {
 
 const ScheduleRequest: React.FC<Props> = ({ navigation }) => {
   const [expanded, setExpanded] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
   const [visible, setVisible] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [editId, setEditId] = useState('');
@@ -32,6 +33,10 @@ const ScheduleRequest: React.FC<Props> = ({ navigation }) => {
   const currentState = useAppSelector((state) => ({
     climbAvailabilityScheduledState: state.climbAvailabilityScheduledState,
   }));
+
+  const wait = (timeout: number) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  };
 
   useEffect(() => {
     dispatch(getAllclimbAvailabilityScheduledAsync());
@@ -137,9 +142,21 @@ const ScheduleRequest: React.FC<Props> = ({ navigation }) => {
     navigation.navigate('View Matches');
   }
 
+  const updatePageData = () => {
+    dispatch(getAllclimbAvailabilityScheduledAsync());
+  }
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    updatePageData();
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
   return (
     <View>
-      <ScrollView>
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
         <Calendar
           style={[styles.calendar]}
           markedDates={returnScheduledCalendar()}

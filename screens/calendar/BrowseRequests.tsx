@@ -1,6 +1,6 @@
 import { Picker } from '@react-native-picker/picker';
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, TextInput, Pressable } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, StyleSheet, ScrollView, TextInput, Pressable, RefreshControl } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { Button, Card, Text, Overlay } from 'react-native-elements';
 import { dateOnly, timeOnly } from '../../helpers/timeAndDate';
@@ -13,6 +13,7 @@ interface Props {};
 
 const BrowseRequests: React.FC<Props> = () => {
   const [visible, setVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [textResponse, setTextResponse] = useState('');
   const [selectResponse, setSelectResponse] = useState('');
   const dispatch = useAppDispatch();
@@ -24,13 +25,31 @@ const BrowseRequests: React.FC<Props> = () => {
     dispatch(getAllClimbRequestsAsync());
   }, []);
 
+  const wait = (timeout: number) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  };
+
+  const updatePageData = () => {
+    dispatch(getAllClimbRequestsAsync());
+  }
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    updatePageData();
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
   const { allClimbRequests, selectedClimbRequest } = currentState.climbRequestState;
 
   if (!allClimbRequests || allClimbRequests.length < 1) {
     return (
-      <View>
-        <Text>No Matches Found</Text>
-      </View>
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
+        <View style={[{ marginTop: 20 }]}>
+          <Text>No Matches Found</Text>
+        </View>
+      </ScrollView>
     )
   }
 
@@ -70,7 +89,9 @@ const BrowseRequests: React.FC<Props> = () => {
 
   return (
     <View>
-      <ScrollView>
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
         <Calendar
           style={[styles.calendar]}
         />

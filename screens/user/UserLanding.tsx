@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { ScrollView, View, StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { ScrollView, View, StyleSheet, ActivityIndicator, RefreshControl, AppState } from 'react-native';
 import { Badge, Button, Switch, Text } from 'react-native-elements';
 import { Image } from 'react-native-elements';
 import { getAllclimbAvailabilityScheduledAsync } from '../../store/climbAvailabilityScheduledSlice';
@@ -12,6 +12,9 @@ interface Props {
 };
 
 const UserLanding: React.FC<Props> = ({ navigation }) => {
+  const appState = useRef(AppState.currentState);
+  const [currentUnreadMessages, setCurrentUnreadMessages] = useState(0);
+  const [refreshing, setRefreshing] = React.useState(false);
   const currentState = useAppSelector((state) => ({
     userState: state.userState,
     climbAvailabilityScheduledState: state.climbAvailabilityScheduledState,
@@ -19,18 +22,14 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
     climbRequestState: state.climbRequestState,
   }));
   const dispatch = useAppDispatch();
-  useEffect(() => {
-    if (currentState.userState.currentUser) {
-      dispatch(getAllclimbAvailabilityScheduledAsync());
-      dispatch(getAllClimbMeetupsAsync());
-    }
-  }, []);
 
-  // if (!currentState.userState.currentUser) {
-  //   return <View />
-  // }
+  const wait = (timeout: number) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  };
 
-  
+  const _handleAppStateChange = (nextAppState: any) => {
+    appState.current = nextAppState;
+  };
   
   const { currentUser } = currentState.userState;
   const { allScheduledAvailability } = currentState.climbAvailabilityScheduledState;
@@ -65,11 +64,44 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
         })
       };
     }
+    setCurrentUnreadMessages(count);
     return count;
   };
+
+  const updatePageData = () => {
+    if (
+      currentState.userState.currentUser
+      && appState.current === 'active'
+    ) {
+      dispatch(getAllclimbAvailabilityScheduledAsync());
+      dispatch(getAllClimbMeetupsAsync());
+      getUnreadMessages();
+    }
+  }
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", _handleAppStateChange);
+    updatePageData();
+    const refreshPage = setInterval(() => {
+      updatePageData();
+    }, 15000);
+    return () => {
+      clearInterval(refreshPage);
+      subscription.remove();
+    }
+  }, []);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    updatePageData();
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
   return (
-    <View>
-      <ScrollView>
+    <View style={[{ width: '100%'}]}>
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
         {
           !currentUser
           && (
@@ -123,7 +155,7 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
                   <Text style= {[styles.profileWidgetItem]}>Unread Messages</Text>
                   <Badge
                     containerStyle={[styles.profileWidgetItem]}
-                    value={getUnreadMessages()}
+                    value={currentUnreadMessages}
                     status="primary"
                   />
                 </View>
