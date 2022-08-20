@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, AppState } from 'react-native';
 import { Input, Text } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -11,6 +11,7 @@ interface Props {
 };
 
 const MeetupMessages: React.FC<Props> = ({ navigation }) => {
+  const appState = useRef(AppState.currentState);
   const [messageDraft, setMessageDraft] = useState('');
   const scrollViewRef = useRef<KeyboardAwareScrollView|null>(null);
   const currentState = useAppSelector((state) => ({
@@ -22,7 +23,7 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
   const { currentUser } = currentState.userState;
 
   const updateMessages = () => {
-    if (selectedClimbMeetup) {
+    if (selectedClimbMeetup && appState.current === 'active') {
       dispatch(getOneClimbMeetupAsync(selectedClimbMeetup.id));
     };
   }
@@ -36,7 +37,12 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
     }));
   };
 
+  const _handleAppStateChange = (nextAppState: any) => {
+    appState.current = nextAppState;
+  };
+
   useEffect(() => {
+    const subscription = AppState.addEventListener("change", _handleAppStateChange);
     if (
       currentUser
       && selectedClimbMeetup
@@ -61,10 +67,11 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
       }
     }
     const refreshMessages = setInterval(() => {
-      updateMessages();
+        updateMessages();
     }, 5000);
     return () => {
       clearInterval(refreshMessages);
+      subscription.remove();
     }
   }, []);
 

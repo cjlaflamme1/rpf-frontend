@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
 import React, { useCallback, useState } from 'react';
 import { ScrollView, View, StyleSheet, ActivityIndicator, Pressable, RefreshControl } from 'react-native';
 import { Button, Card, Overlay, Text } from 'react-native-elements';
@@ -129,7 +130,7 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
               {
                 presentRequest.targetMessageResponse
                 && (
-                  <Text>
+                  <Text style={[styles.targetMessageResponse]}>
                     {presentRequest.targetMessageResponse}
                   </Text>
                 )
@@ -153,7 +154,7 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
               {
                 presentRequest.targetMessageResponse
                 && (
-                  <Text>
+                  <Text style={[styles.targetMessageResponse]}>
                     {presentRequest.targetMessageResponse}
                   </Text>
                 )
@@ -214,7 +215,7 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
               {
                 presentRequest.targetMessageResponse
                 && (
-                  <Text>
+                  <Text style={[styles.targetMessageResponse]}>
                     {presentRequest.targetMessageResponse}
                   </Text>
                 )
@@ -238,7 +239,7 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
               {
                 presentRequest.targetMessageResponse
                 && (
-                  <Text>
+                  <Text style={[styles.targetMessageResponse]}>
                     {presentRequest.targetMessageResponse}
                   </Text>
                 )
@@ -315,13 +316,14 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
                         }
                       </View>
                     </View>
-                    <View>
-                      <Text style={[styles.cardSection]}>{`${match.initialUser.firstName} ${match.initialUser.lastName}`}</Text>
-                      <Pressable onPress={() => openProfile(match.initialUser.id)}>
-                        <Text style={[styles.cardSection, { marginTop: 10 }]}>Link to Profile info</Text>
+                    <View style={[{ justifyContent: 'space-evenly', flexGrow: 1}]}>
+                      <Pressable style={[styles.pressableIconContainer]} onPress={() => openProfile(match.initialUser.id)}>
+                        <MaterialCommunityIcons name="face-man-outline" size={24} color={'#CC1406'} />
+                        <Text style={[styles.cardSection, { marginTop: 5 }]}>Profile info</Text>
                       </Pressable>
-                      <Pressable onPress={() => openClimbingProfile(match.initialUser)}>
-                        <Text style={[styles.cardSection, { marginTop: 10 }]}>Link to Climbing info</Text>
+                      <Pressable style={[styles.pressableIconContainer]} onPress={() => openClimbingProfile(match.initialUser)}>
+                        <FontAwesome5 name="hand-rock" size={24} color="#CC1406" />
+                        <Text style={[styles.cardSection, { marginTop: 5 }]}>Climbing info</Text>
                       </Pressable>
                     </View>
                   </View>
@@ -375,37 +377,21 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
                         }
                       </View>
                     </View>
-                    <View>
-                      <Text style={[styles.cardSection]}>Icon</Text>
-                      <Text style={[styles.cardSection]}>{`${match.user.firstName} ${match.user.lastName}`}</Text>
-                      <Text style={[styles.cardSection]}>Link to Profile info</Text>
-                      <Text style={[styles.cardSection]}>Link to Climbing info</Text>
+                    <View style={[{ justifyContent: 'space-evenly', flexGrow: 1}]}>
+                      <Pressable style={[styles.pressableIconContainer]} onPress={() => openProfile(match.user.id)}>
+                        <MaterialCommunityIcons name="face-man-outline" size={24} color={'#CC1406'} />
+                        <Text style={[styles.cardSection, { marginTop: 5 }]}>Profile info</Text>
+                      </Pressable>
+                      <Pressable style={[styles.pressableIconContainer]} onPress={() => openClimbingProfile(match.user)}>
+                        <FontAwesome5 name="hand-rock" size={24} color="#CC1406" />
+                        <Text style={[styles.cardSection, { marginTop: 5 }]}>Climbing info</Text>
+                      </Pressable>
                     </View>
                   </View>
                   <View style={[styles.sectionContainer]}>
                     {
                       returnMatchButtonGen(match)
                     }
-                    {/* <Button
-                      disabled={
-                        (match
-                        && match.incomingClimbRequests
-                        && match.incomingClimbRequests.length > 0
-                        && match.incomingClimbRequests.find((req) => req.initiatingEntry.id === selectedScheduledAvailability.id))
-                          ? true
-                          : false
-                      }
-                      containerStyle={[styles.cardButton]}
-                      title={
-                        (match
-                          && match.incomingClimbRequests
-                          && match.incomingClimbRequests.length > 0
-                          && match.incomingClimbRequests.find((req) => req.initiatingEntry.id === selectedScheduledAvailability.id))
-                            ? 'Request submitted'
-                            : 'Submit request'
-                      }
-                      onPress={() => submitGenMatchRequest(match)}
-                    /> */}
                   </View>
                 </Card>
               ))
@@ -459,7 +445,7 @@ const styles = StyleSheet.create({
   },
   cardContentContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-evenly',
   },
   cardButton: {
     width: '100%',
@@ -470,6 +456,13 @@ const styles = StyleSheet.create({
   },
   areaItem: {
     marginLeft: 5,
+  },
+  pressableIconContainer: {
+    marginTop: 10,
+    alignItems: 'center'
+  },
+  targetMessageResponse: {
+    margin: 10,
   }
 })
 

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { ScrollView, View, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { ScrollView, View, StyleSheet, ActivityIndicator, RefreshControl, AppState } from 'react-native';
 import { Badge, Button, Switch, Text } from 'react-native-elements';
 import { Image } from 'react-native-elements';
 import { getAllclimbAvailabilityScheduledAsync } from '../../store/climbAvailabilityScheduledSlice';
@@ -12,6 +12,7 @@ interface Props {
 };
 
 const UserLanding: React.FC<Props> = ({ navigation }) => {
+  const appState = useRef(AppState.currentState);
   const [currentUnreadMessages, setCurrentUnreadMessages] = useState(0);
   const [refreshing, setRefreshing] = React.useState(false);
   const currentState = useAppSelector((state) => ({
@@ -24,6 +25,10 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
 
   const wait = (timeout: number) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
+  };
+
+  const _handleAppStateChange = (nextAppState: any) => {
+    appState.current = nextAppState;
   };
   
   const { currentUser } = currentState.userState;
@@ -64,7 +69,10 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
   };
 
   const updatePageData = () => {
-    if (currentState.userState.currentUser) {
+    if (
+      currentState.userState.currentUser
+      && appState.current === 'active'
+    ) {
       dispatch(getAllclimbAvailabilityScheduledAsync());
       dispatch(getAllClimbMeetupsAsync());
       getUnreadMessages();
@@ -72,7 +80,15 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
   }
 
   useEffect(() => {
+    const subscription = AppState.addEventListener("change", _handleAppStateChange);
     updatePageData();
+    const refreshPage = setInterval(() => {
+      updatePageData();
+    }, 5000);
+    return () => {
+      clearInterval(refreshPage);
+      subscription.remove();
+    }
   }, []);
 
   const onRefresh = React.useCallback(() => {
