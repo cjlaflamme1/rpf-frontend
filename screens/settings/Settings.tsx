@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, StyleSheet, ActivityIndicator } from 'react-native';
+import { ScrollView, View, StyleSheet, ActivityIndicator, Linking } from 'react-native';
 import { Button, Text } from 'react-native-elements';
 import * as SecureStore from 'expo-secure-store';
 import { logoutAction } from '../../store/authSlice';
@@ -22,6 +22,11 @@ const Settings: React.FC<Props> = () => {
               containerStyle={[styles.navButton]}
               title={'Logout'}
               onPress={logout}
+            />
+            <Button
+              containerStyle={[styles.navButton]}
+              title={'Send Feedback'}
+              onPress={() => Linking.openURL('https://forms.gle/a7v2bc1BSqWQ1tMY7')}
             />
           </View>
         </ScrollView>

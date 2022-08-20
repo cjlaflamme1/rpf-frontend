@@ -15,6 +15,7 @@ interface Props {
 const PersonalProfile: React.FC<Props> = ({ otherUser }) => {
   const [locationText, setLocationText] = useState('');
   const [personalBio, setPersonalBio] = useState('');
+  const [debounceHandle, setDebounceHandle] = useState<any>();
   const currentState = useAppSelector((state) => ({
     userState: state.userState,
   }));
@@ -35,6 +36,12 @@ const PersonalProfile: React.FC<Props> = ({ otherUser }) => {
       }}));
     }
   }
+
+  const updateResolutionDetails = async (resolution: string, location: 'location' | 'bio') => {
+    if (currentUser && resolution) {
+      updatePersonalBio(resolution, location);
+    }
+  };
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -105,8 +112,12 @@ const PersonalProfile: React.FC<Props> = ({ otherUser }) => {
               numberOfLines={1}
               maxLength={255}
               defaultValue={currentUser.location || ''}
-              onChangeText={(e) => setLocationText(e)}
-              onEndEditing={() => updatePersonalBio(locationText, 'location')}
+              onChangeText={(e) => {
+                if (debounceHandle) clearTimeout(debounceHandle);
+                const handle = setTimeout(() => updateResolutionDetails(e, 'location'), 750);
+                setDebounceHandle(handle);
+                updateResolutionDetails(e, 'location');
+              }}
             />
           </View>
           <View style={[styles.sectionContainer]}>
@@ -117,8 +128,12 @@ const PersonalProfile: React.FC<Props> = ({ otherUser }) => {
               multiline
               defaultValue={currentUser.shortBio || ''}
               numberOfLines={6}
-              onChangeText={(e) => setPersonalBio(e)}
-              onEndEditing={(e) => updatePersonalBio(personalBio, 'bio')}
+              onChangeText={(e) => {
+                if (debounceHandle) clearTimeout(debounceHandle);
+                const handle = setTimeout(() => updateResolutionDetails(e, 'bio'), 750);
+                setDebounceHandle(handle);
+                updateResolutionDetails(e, 'bio');
+              }}
             />
           </View>
         </ScrollView>

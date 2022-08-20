@@ -84,7 +84,7 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
     updatePageData();
     const refreshPage = setInterval(() => {
       updatePageData();
-    }, 5000);
+    }, 15000);
     return () => {
       clearInterval(refreshPage);
       subscription.remove();
@@ -98,7 +98,7 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
   }, []);
 
   return (
-    <View>
+    <View style={[{ width: '100%'}]}>
       <ScrollView
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >

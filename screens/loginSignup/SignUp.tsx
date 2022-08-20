@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Switch, View } from 'react-native';
 import { Text, Input, Button } from 'react-native-elements';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { postPresignedUrl, putImageOnS3 } from '../../api/s3API';
 import SignUpStepOne from '../../components/user/signUpStepOne';
 import SignUpStepThree from '../../components/user/signUpStepThree';
@@ -15,6 +16,7 @@ interface Props { };
 const SignUp: React.FC<Props> = () => {
   const [signupPhase, setSignUpPhase] = useState(1);
   const [errors, setErrors] = useState(true);
+  const scrollViewRef = useRef<KeyboardAwareScrollView|null>(null);
   const [photo, setPhoto] = useState<File>();
   const [signupObject, setSignupObject] = useState<SignupObject>();
 
@@ -91,7 +93,12 @@ const SignUp: React.FC<Props> = () => {
       <View style={[styles.headerText]}>
         <Text h1>Sign Up</Text>
       </View>
-      <ScrollView>
+      <KeyboardAwareScrollView
+        scrollsToTop={false}
+        ref={scrollViewRef}
+        onLayout={() => scrollViewRef?.current?.scrollToEnd()}
+        onContentSizeChange={() => scrollViewRef?.current?.scrollToEnd()}
+      >
         <View style={[styles.signUpContentContainer]}>
           {
             signupPhase === 1
@@ -122,7 +129,7 @@ const SignUp: React.FC<Props> = () => {
             )
           }
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
       <View style={[styles.buttonContainer]}>
         <Button
           title="Back"

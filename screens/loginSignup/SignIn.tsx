@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Switch, View } from 'react-native';
 import { Text, Input, Button } from 'react-native-elements';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { signInAsync } from '../../store/authSlice';
 import { useAppDispatch } from '../../store/hooks';
 import { getCurrentUserAsync } from '../../store/userSlice';
@@ -10,6 +11,7 @@ interface Props { };
 const SignIn: React.FC<Props> = () => {
   const [signupPhase, setSignUpPhase] = useState(1);
   const [errors, setErrors] = useState(true);
+  const scrollViewRef = useRef<KeyboardAwareScrollView|null>(null);
   const [email, setEmail] = useState('');
   const [pw, setPw] = useState('');
 
@@ -25,7 +27,12 @@ const SignIn: React.FC<Props> = () => {
       <View style={[styles.headerText]}>
         <Text h1>Sign In</Text>
       </View>
-      <ScrollView>
+      <KeyboardAwareScrollView
+        scrollsToTop={false}
+        ref={scrollViewRef}
+        onLayout={() => scrollViewRef?.current?.scrollToEnd()}
+        onContentSizeChange={() => scrollViewRef?.current?.scrollToEnd()}
+      >
         <View style={[styles.signUpContentContainer]}>
           <View style={[styles.inputContainer]}>
             <Input
@@ -47,7 +54,7 @@ const SignIn: React.FC<Props> = () => {
               inputContainerStyle={[styles.inputContainer]} />
           </View>
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
       <View style={[styles.buttonContainer]}>
         <Button
           title="Back"
