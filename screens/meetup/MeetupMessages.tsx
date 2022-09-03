@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, AppState } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, AppState, ActivityIndicator } from 'react-native';
 import { Input, Text } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -14,6 +14,7 @@ interface Props {
 const MeetupMessages: React.FC<Props> = ({ navigation }) => {
   const appState = useRef(AppState.currentState);
   const [messageDraft, setMessageDraft] = useState('');
+  const [sendingMessage, setSendingMessage] = useState(false);
   const scrollViewRef = useRef<KeyboardAwareScrollView|null>(null);
   const currentState = useAppSelector((state) => ({
     climbMeetupState: state.climbMeetupState,
@@ -79,6 +80,7 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
   }, []);
 
   const submitMessage = async () => {
+    setSendingMessage(true);
     if (selectedClimbMeetup && messageDraft && currentUser) {
       await dispatch(createClimbMessageAsync({
         message: messageDraft,
@@ -87,6 +89,7 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
       setMessageDraft('');
       dispatch(getOneClimbMeetupAsync(selectedClimbMeetup.id));
     }
+    setSendingMessage(false);
   }
 
   if (!currentUser) {
@@ -145,8 +148,16 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
             />
           <Pressable
             onPress={submitMessage}
+            disabled={sendingMessage}
             >
-            <MaterialCommunityIcons name="message" size={36} color="blue" />
+            {
+              sendingMessage
+                ? (
+                  <ActivityIndicator />
+                ) : (
+                  <MaterialCommunityIcons name="message" size={36} color="blue" />
+                )
+            }
           </Pressable>
         </View>
       </KeyboardAwareScrollView>
