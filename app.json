@@ -13,7 +13,7 @@
       ]
     ],
     "slug": "NH-Climbing-Partners",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/rpf_icon.png",
     "backgroundColor": "#9DBDC6",
@@ -34,7 +34,7 @@
       "backgroundColor": "#9DBDC6"
     },
     "android": {
-      "versionCode": 4,
+      "versionCode": 5,
       "package": "com.nhclimbingpartners",
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
