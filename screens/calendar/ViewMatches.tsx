@@ -1,7 +1,8 @@
 import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
-import React, { useCallback, useState } from 'react';
-import { ScrollView, View, StyleSheet, ActivityIndicator, Pressable, RefreshControl } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ScrollView, View, StyleSheet, ActivityIndicator, Pressable, RefreshControl, TextInput } from 'react-native';
 import { Button, Card, Overlay, Text } from 'react-native-elements';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Toast from 'react-native-root-toast';
 import { getOtherUser } from '../../api/userAPI';
 import { dateOnly, timeOnly } from '../../helpers/timeAndDate';
@@ -14,6 +15,13 @@ import { User } from '../../store/userSlice';
 import ClimbingProfile from '../user/ClimbingProfile';
 import PersonalProfile from '../user/PersonalProfile';
 
+
+interface RequestData {
+  targetUserId: string | null;
+  targetGenRequestId: string | null;
+  targetScheduledReqId: string | null;
+  initialMessage: string;
+}
 interface Props {
   navigation: any;
 };
@@ -21,6 +29,10 @@ interface Props {
 const ViewMatches: React.FC<Props> = ({ navigation }) => {
   const [showToast, setShowToast] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [sendReq, setSendReq] = useState(false);
+  const [reqData, setReqData] = useState<RequestData>();
+  const scrollViewRef = useRef<KeyboardAwareScrollView|null>(null);
+  const [submitInProgress, setSubmitInProgress] = useState(false);
   const [visible, setVisible] = useState(false);
   const [climbingOverlay, setClimbingOverlay] = useState(false);
   const [otherUserProfile, setOtherUserProfile] = useState<User>();
@@ -33,18 +45,31 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
   };
 
+  const clearReqData = () => {
+    setReqData({
+      targetUserId: '',
+      initialMessage: '',
+      targetGenRequestId: null,
+      targetScheduledReqId: null,
+    });
+  }
+
+  useEffect(() => {
+    clearReqData();
+  }, []);
+
   const { selectedScheduledAvailability } = currentState.climbAvailabilityScheduledState;
 
-  const updatePageData = () => {
+  const updatePageData = async () => {
+    setRefreshing(true);
     if (selectedScheduledAvailability) {
-      dispatch(getOneClimbAvailScheduledAsync(selectedScheduledAvailability.id));
+      await dispatch(getOneClimbAvailScheduledAsync(selectedScheduledAvailability.id));
     }
+    setRefreshing(false);
   }
 
   const onRefresh = useCallback(() => {
-    setRefreshing(true);
     updatePageData();
-    wait(2000).then(() => setRefreshing(false));
   }, []);
   
   if (
@@ -88,26 +113,42 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
     setOtherUserProfile(undefined);
     setClimbingOverlay(false);
   }
+
+  const openRequestModal = (arg: RequestData) => {
+    setReqData(arg);
+    setSendReq(true);
+  }
+
+  const cancelRequestModal = () => {
+    clearReqData();
+    setSendReq(false);
+  }
   
-  const submitSchedMatchRequest = async (match: ClimbAvailabilityScheduled) => {
+  const submitSchedMatchRequest = async (matchId: string, matchUserId: string, message: string) => {
+    setSubmitInProgress(true);
     await dispatch(createClimbRequestAsync({
-      initialMessage: '',
+      initialMessage: message,
       initiatingEntryId: selectedScheduledAvailability.id,
-      targetScheduledReqId: match.id,
-      targetUserId: match.initialUser.id,
+      targetScheduledReqId: matchId,
+      targetUserId: matchUserId,
     }));
+    cancelRequestModal();
     dispatch(getOneClimbAvailScheduledAsync(selectedScheduledAvailability.id));
+    setSubmitInProgress(false);
     setShowToast(true);
   };
 
-  const submitGenMatchRequest = async (match: ClimbAvailabilityGen) => {
+  const submitGenMatchRequest = async (matchId: string, matchUserId: string, message: string) => {
+    setSubmitInProgress(true);
     await dispatch(createClimbRequestAsync({
-      initialMessage: '',
+      initialMessage: message,
       initiatingEntryId: selectedScheduledAvailability.id,
-      targetGenRequestId: match.id,
-      targetUserId: match.user.id,
+      targetGenRequestId: matchId,
+      targetUserId: matchUserId,
     }));
+    cancelRequestModal();
     dispatch(getOneClimbAvailScheduledAsync(selectedScheduledAvailability.id));
+    setSubmitInProgress(false);
     setShowToast(true);
   };
   const { matches, genMatches } = selectedScheduledAvailability;
@@ -196,7 +237,15 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
       <Button
         containerStyle={[styles.cardButton]}
         title={"Submit Request"}
-        onPress={() => submitSchedMatchRequest(match)}
+        // onPress={() => submitSchedMatchRequest(match)}
+        onPress={() => {
+          openRequestModal({
+            targetGenRequestId: null,
+            targetUserId: match.initialUser.id,
+            initialMessage: '',
+            targetScheduledReqId: match.id,
+          });
+        }}
       />
     );
   };
@@ -257,7 +306,7 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
             disabled
             containerStyle={[styles.cardButton]}
             title={"Request Submitted"}
-            onPress={() => submitGenMatchRequest(match)}
+            // onPress={() => submitGenMatchRequest(match)}
           />
         )
       }
@@ -266,7 +315,14 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
       <Button
         containerStyle={[styles.cardButton]}
         title={"Submit Request"}
-        onPress={() => submitGenMatchRequest(match)}
+        onPress={() => {
+          openRequestModal({
+            targetGenRequestId: match.id,
+            targetUserId: match.user.id,
+            initialMessage: '',
+            targetScheduledReqId: null,
+          });
+        }}
       />
     );
   };
@@ -276,8 +332,12 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
       <Toast visible={showToast} onShow={() => setTimeout(() => setShowToast(false), 3000)}>
         Match request submitted!
       </Toast>
-      <ScrollView
+      <KeyboardAwareScrollView
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        scrollsToTop={false}
+        ref={scrollViewRef}
+        onLayout={() => scrollViewRef?.current?.scrollToEnd()}
+        onContentSizeChange={() => scrollViewRef?.current?.scrollToEnd()}
       >
         <View style={[styles.sectionContainer]}>
           <Text h3>{dateOnly(selectedScheduledAvailability.startDateTime)}</Text>
@@ -422,7 +482,68 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
             <ClimbingProfile otherUser={otherUserProfile} />
           </Overlay>
         </View>
-      </ScrollView>
+        <View>
+          <Overlay
+            onBackdropPress={closeClimbingProfile}
+            isVisible={sendReq}
+            overlayStyle={[styles.modalContainer]}
+          >
+            <View style={[styles.sectionContainer, { marginBottom: 15 }]}>
+              <Text h4>Submit note with your request:</Text>
+            </View>
+            <View style={[styles.sectionContainer, { marginBottom: 15 }]}>
+              <TextInput
+                style={[styles.textInput]}
+                value={reqData?.initialMessage || ''}
+                multiline
+                onChangeText={(e) => reqData && setReqData({...reqData, initialMessage: e})}
+                keyboardType={"default"}
+                placeholder="Please enter a note here..."
+              />
+            </View>
+            <View style={[styles.buttonContainer, styles.doubleButtonContainer]}>
+                <Button
+                  title="Cancel"
+                  containerStyle={[styles.matchButton]}
+                  onPress={cancelRequestModal}
+                />
+                {
+                  reqData
+                  && reqData.targetGenRequestId
+                  && (
+                    <Button
+                      onPress={() => {
+                        if (reqData && reqData.targetGenRequestId && reqData.targetUserId) {
+                          submitGenMatchRequest(reqData.targetGenRequestId, reqData.targetUserId, reqData.initialMessage)
+                        }
+                      }}
+                      disabled={submitInProgress}
+                      containerStyle={[styles.matchButton]}
+                      title={submitInProgress ? "Sending" : "Submit"}
+                    />
+                  )
+                }
+                {
+                  reqData
+                  && reqData.targetScheduledReqId
+                  && (
+                    <Button
+                      onPress={() => {
+                        if (reqData && reqData.targetScheduledReqId && reqData.targetUserId) {
+                          submitSchedMatchRequest(reqData.targetScheduledReqId, reqData.targetUserId, reqData.initialMessage);
+                        }
+                      }}
+                      containerStyle={[styles.matchButton]}
+                      disabled={submitInProgress}
+                      title={submitInProgress ? "Sending" : "Submit"}
+                    />
+                  )
+                }
+              </View>
+          </Overlay>
+        </View>
+      {/* </ScrollView> */}
+      </KeyboardAwareScrollView>
     </View>
   )
 };
@@ -438,6 +559,24 @@ const styles = StyleSheet.create({
     marginTop: 5,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  doubleButtonContainer: {
+    flexDirection: 'row',
+  },
+  buttonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  matchButton: {
+    width: 150,
+    maxWidth: '95%',
+    margin: 10,
+  },
+  textInput: {
+    width: '100%',
+    minHeight: 50,
+    padding: 5,
+    borderWidth: 1,
   },
   cardContainer: {
     minWidth: '95%',

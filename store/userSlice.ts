@@ -14,6 +14,7 @@ export interface User {
   imageGetURL?: string;
   location: string | null;
   shortBio: string | null;
+  expoPushToken: string | null;
 }
 
 interface UserState {

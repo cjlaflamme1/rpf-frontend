@@ -29,14 +29,14 @@ const BrowseRequests: React.FC<Props> = () => {
     return new Promise(resolve => setTimeout(resolve, timeout));
   };
 
-  const updatePageData = () => {
-    dispatch(getAllClimbRequestsAsync());
+  const updatePageData = async () => {
+    setRefreshing(true);
+    await dispatch(getAllClimbRequestsAsync());
+    setRefreshing(false);
   }
 
   const onRefresh = useCallback(() => {
-    setRefreshing(true);
     updatePageData();
-    wait(2000).then(() => setRefreshing(false));
   }, []);
 
   const { allClimbRequests, selectedClimbRequest } = currentState.climbRequestState;
@@ -157,10 +157,10 @@ const BrowseRequests: React.FC<Props> = () => {
                           }
                         </Text>
                         <Text style={[styles.cardSection]}>
-                          {`Start time: ${request.targetGenRequest.startHour}:${request.targetGenRequest.startMinute} ${request.targetGenRequest.startAMPM}`}
+                          {`Start time: ${request.targetGenRequest.startHour}:${request.targetGenRequest.startMinute !== 0 ? request.targetGenRequest.startMinute : request.targetGenRequest.startMinute.toString() + '0'} ${request.targetGenRequest.startAMPM}`}
                         </Text>
                         <Text style={[styles.cardSection]}>
-                          {`End Time: ${request.targetGenRequest.finishHour}:${request.targetGenRequest.startMinute} ${request.targetGenRequest.finishAMPM}`}
+                          {`End Time: ${request.targetGenRequest.finishHour}:${request.targetGenRequest.finishMinute !== 0 ? request.targetGenRequest.finishMinute : request.targetGenRequest.finishMinute.toString() + '0'} ${request.targetGenRequest.finishAMPM}`}
                         </Text>
                         <View>
                           <Text style={[styles.cardSection]}>
@@ -206,6 +206,16 @@ const BrowseRequests: React.FC<Props> = () => {
                     )
                   }
                 </View>
+                {
+                  request.initialMessage
+                  && (
+                    <View style={[styles.sectionContainer]}>
+                      <Text style={[styles.targetMessageResponse]}>
+                        {request.initialMessage}
+                      </Text>
+                    </View>
+                  )
+                }
                 <View style={[styles.sectionContainer]}>
                   <Button
                     disabled={request.targetAccepted !== null}
@@ -444,9 +454,11 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginBottom: 10,
   },
-
   checkboxChecked: {
     backgroundColor: '#CC1406',
+  },
+  targetMessageResponse: {
+    margin: 10,
   },
 })
 

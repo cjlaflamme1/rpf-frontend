@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, AppState } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, AppState, ActivityIndicator } from 'react-native';
 import { Input, Text } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { createClimbMessageAsync, getAllClimbMeetupsAsync, getOneClimbMeetupAsync, updateClimbMessageAsync } from '../../store/climbMeetupSlice';
+import { useIsFocused } from '@react-navigation/native';
 
 interface Props {
   navigation: any;
@@ -13,6 +14,7 @@ interface Props {
 const MeetupMessages: React.FC<Props> = ({ navigation }) => {
   const appState = useRef(AppState.currentState);
   const [messageDraft, setMessageDraft] = useState('');
+  const [sendingMessage, setSendingMessage] = useState(false);
   const scrollViewRef = useRef<KeyboardAwareScrollView|null>(null);
   const currentState = useAppSelector((state) => ({
     climbMeetupState: state.climbMeetupState,
@@ -21,6 +23,7 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const { selectedClimbMeetup } = currentState.climbMeetupState;
   const { currentUser } = currentState.userState;
+  const isFocused = useIsFocused();
 
   const updateMessages = () => {
     if (selectedClimbMeetup && appState.current === 'active') {
@@ -59,6 +62,7 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
       && selectedClimbMeetup
       && selectedClimbMeetup.messages
       && selectedClimbMeetup.messages.length > 0
+      && isFocused
     ) {
       const relevantMessages = selectedClimbMeetup.messages.filter((mess) => (mess.user.id !== currentUser.id) && !mess.read);
       if (relevantMessages && relevantMessages.length > 0) {
@@ -76,6 +80,7 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
   }, []);
 
   const submitMessage = async () => {
+    setSendingMessage(true);
     if (selectedClimbMeetup && messageDraft && currentUser) {
       await dispatch(createClimbMessageAsync({
         message: messageDraft,
@@ -84,6 +89,7 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
       setMessageDraft('');
       dispatch(getOneClimbMeetupAsync(selectedClimbMeetup.id));
     }
+    setSendingMessage(false);
   }
 
   if (!currentUser) {
@@ -142,8 +148,16 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
             />
           <Pressable
             onPress={submitMessage}
+            disabled={sendingMessage}
             >
-            <MaterialCommunityIcons name="message" size={36} color="blue" />
+            {
+              sendingMessage
+                ? (
+                  <ActivityIndicator />
+                ) : (
+                  <MaterialCommunityIcons name="message" size={36} color="blue" />
+                )
+            }
           </Pressable>
         </View>
       </KeyboardAwareScrollView>
