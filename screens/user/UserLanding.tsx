@@ -68,13 +68,13 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
     return count;
   };
 
-  const updatePageData = () => {
+  const updatePageData = async () => {
     if (
       currentState.userState.currentUser
       && appState.current === 'active'
     ) {
-      dispatch(getAllclimbAvailabilityScheduledAsync());
-      dispatch(getAllClimbMeetupsAsync());
+      await dispatch(getAllclimbAvailabilityScheduledAsync());
+      await dispatch(getAllClimbMeetupsAsync());
       getUnreadMessages();
     }
   }
@@ -94,7 +94,7 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     updatePageData();
-    wait(2000).then(() => setRefreshing(false));
+    setRefreshing(false);
   }, []);
 
   return (

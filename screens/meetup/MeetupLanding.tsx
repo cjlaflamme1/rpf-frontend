@@ -63,16 +63,16 @@ const MeetupLanding: React.FC<Props> = ({ navigation }) => {
     setClimbingOverlay(false);
   }
 
-  const updatePageData = () => {
+  const updatePageData = async () => {
+    setRefreshing(true);
     if (currentState.userState.currentUser) {
       dispatch(getAllClimbMeetupsAsync());
     }
+    setRefreshing(false);
   }
 
   const onRefresh = useCallback(() => {
-    setRefreshing(true);
     updatePageData();
-    wait(2000).then(() => setRefreshing(false));
   }, []);
 
   if (!currentUser) {

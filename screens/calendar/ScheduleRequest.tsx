@@ -142,14 +142,14 @@ const ScheduleRequest: React.FC<Props> = ({ navigation }) => {
     navigation.navigate('View Matches');
   }
 
-  const updatePageData = () => {
+  const updatePageData = async () => {
+    setRefreshing(true);
     dispatch(getAllclimbAvailabilityScheduledAsync());
+    setRefreshing(false);
   }
 
   const onRefresh = useCallback(() => {
-    setRefreshing(true);
     updatePageData();
-    wait(2000).then(() => setRefreshing(false));
   }, []);
 
   return (
