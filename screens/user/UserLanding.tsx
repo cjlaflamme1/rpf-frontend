@@ -155,14 +155,18 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
                   <Text style= {[styles.profileWidgetItem]}>Unread Messages</Text>
                   <Badge
                     containerStyle={[styles.profileWidgetItem]}
-                    value={currentUnreadMessages}
+                    value={() => (
+                      <Text style={[{ color: 'white' }]}>{currentUnreadMessages}</Text>
+                    )}
                     status="primary"
                   />
                 </View>
                 <View style={[styles.profileWidgetRow]}>
                   <Badge
                     containerStyle={[styles.profileWidgetItem]}
-                    value={(allClimbRequests?.filter((req) => req.targetAccepted === null) || []).length}
+                    value={() => (
+                      <Text style={[{ color: 'white' }]}>{(allClimbRequests?.filter((req) => req.targetAccepted === null) || []).length}</Text>
+                    )}
                     status="primary"
                   />
                   <Text style= {[styles.profileWidgetItem]}>Requests Open</Text>
@@ -171,7 +175,9 @@ const UserLanding: React.FC<Props> = ({ navigation }) => {
                   <Text style= {[styles.profileWidgetItem]}>Upcoming meetups</Text>
                   <Badge
                     containerStyle={[styles.profileWidgetItem]}
-                    value={(allClimbMeetups || []).length}
+                    value={() => (
+                      <Text style={[{ color: 'white' }]}>{(allClimbMeetups || []).length}</Text>
+                    )}
                     status="primary"
                   />
                 </View>
