@@ -5,6 +5,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { createClimbMessageAsync, getAllClimbMeetupsAsync, getOneClimbMeetupAsync, updateClimbMessageAsync } from '../../store/climbMeetupSlice';
+import { useIsFocused } from '@react-navigation/native';
 
 interface Props {
   navigation: any;
@@ -21,6 +22,7 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const { selectedClimbMeetup } = currentState.climbMeetupState;
   const { currentUser } = currentState.userState;
+  const isFocused = useIsFocused();
 
   const updateMessages = () => {
     if (selectedClimbMeetup && appState.current === 'active') {
@@ -59,6 +61,7 @@ const MeetupMessages: React.FC<Props> = ({ navigation }) => {
       && selectedClimbMeetup
       && selectedClimbMeetup.messages
       && selectedClimbMeetup.messages.length > 0
+      && isFocused
     ) {
       const relevantMessages = selectedClimbMeetup.messages.filter((mess) => (mess.user.id !== currentUser.id) && !mess.read);
       if (relevantMessages && relevantMessages.length > 0) {
