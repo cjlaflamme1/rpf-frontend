@@ -174,7 +174,9 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     justifyContent: 'space-between',
-    minHeight: '90%',
+    display: 'flex',
+    flexGrow: 1,
+    overflow: 'scroll',
   },
   pageContainer: {
     marginTop: 10,
