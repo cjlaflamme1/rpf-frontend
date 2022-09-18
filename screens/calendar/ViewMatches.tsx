@@ -222,7 +222,7 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
       && match.climbRequests
       && match.climbRequests.length > 0
     ) {
-      const otherUserRequested = match.climbRequests.find((req) => req.initiatingEntry && req.initiatingEntry.id === match.id);
+      const otherUserRequested = match.climbRequests.find((req) => req.initiatingEntry && (req.initiatingEntry.id === match.id));
       if (otherUserRequested) {
         return (
           <Button
