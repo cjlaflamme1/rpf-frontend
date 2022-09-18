@@ -163,7 +163,7 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
       && match.incomingClimbRequests
       && match.incomingClimbRequests.length > 0
     ) {
-      const presentRequest = match.incomingClimbRequests.find((req) => req.initiatingEntry.id === selectedScheduledAvailability.id);
+      const presentRequest = match.incomingClimbRequests.find((req) => req.initiatingEntry && (req.initiatingEntry.id === selectedScheduledAvailability.id));
       if (presentRequest) {
         if (presentRequest.climbMeetup) {
           return (
@@ -222,7 +222,7 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
       && match.climbRequests
       && match.climbRequests.length > 0
     ) {
-      const otherUserRequested = match.climbRequests.find((req) => req.initiatingEntry && req.initiatingEntry.id === match.id);
+      const otherUserRequested = match.climbRequests.find((req) => req.initiatingEntry && (req.initiatingEntry.id === match.id));
       if (otherUserRequested) {
         return (
           <Button
@@ -256,7 +256,7 @@ const ViewMatches: React.FC<Props> = ({ navigation }) => {
       && match.incomingClimbRequests
       && match.incomingClimbRequests.length > 0
     ) {
-      const presentRequest = match.incomingClimbRequests.find((req) => req.initiatingEntry.id === selectedScheduledAvailability.id);
+      const presentRequest = match.incomingClimbRequests.find((req) => req.initiatingEntry && (req.initiatingEntry.id === selectedScheduledAvailability.id));
       if (presentRequest) {
         if (presentRequest.climbMeetup) {
           return (
