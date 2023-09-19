@@ -1,3 +1,1 @@
-RBT Grey: #9DBDC6
-RBT LtGrey: #DAEAEF
-RBT Red:  #CC1406
+Old Rock Climbing Partner Finder - React Native. Project abandoned Fall 2022 and idea exanded into larger scope. See Outdoor Community Project, soon.
